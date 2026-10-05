@@ -14,11 +14,35 @@ test("demo profiles isolate their screens and specialist can leave a request", a
   await page.getByRole("button", { name: "Пациент", exact: true }).evaluate((button) => (button as HTMLButtonElement).click());
   await expect(page.getByRole("dialog")).not.toBeVisible();
   await expect(page.getByRole("heading", { name: "Ваш следующий шаг" })).toBeVisible();
+  await expect(page.locator(".case-journal")).not.toBeVisible();
   await expect(page.getByRole("button", { name: "Добавить исследование" })).not.toBeVisible();
   await page.getByRole("button", { name: "Администратор", exact: true }).click();
+  await expect(page.locator(".case-journal")).toBeVisible();
   await expect(page.getByRole("tab", { name: "История" })).toBeVisible();
   await expect(page.getByRole("tab", { name: "Воронка" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Подтвердить маршрут" })).not.toBeVisible();
+});
+
+test("journal ties each patient label to the selected study", async ({ page }) => {
+  await page.goto("/");
+  const excludedLabels = /демо|демонстрац|синтет|гипотез|DEMO-/i;
+  await expect(page.locator("body")).not.toContainText(excludedLabels);
+  await page.getByRole("button", { name: "Добавить исследование" }).click();
+  await expect(page.getByRole("dialog")).not.toContainText(excludedLabels);
+  await page.getByRole("button", { name: "Закрыть" }).click();
+  await page.getByRole("button", { name: "Администратор", exact: true }).click();
+  await expect(page.locator(".case-journal")).toBeVisible();
+  const row = page.locator(".case-journal-row").nth(1);
+  const patient = await row.locator(".journal-patient").innerText();
+  const study = await row.locator(".journal-study strong").innerText();
+  await row.click();
+  await expect(page.locator(".detail .study-patient")).toContainText(patient);
+  await expect(page.locator(".case-journal-row.selected")).toContainText(patient);
+  await page.getByRole("button", { name: "Пациент", exact: true }).click();
+  await expect(page.locator(".case-journal")).not.toBeVisible();
+  await expect(page.locator(".patient-panel .study-patient")).toContainText(patient);
+  await expect(page.locator(".patient-panel .study-patient")).toContainText(study);
+  await expect(page.locator("body")).not.toContainText(excludedLabels);
 });
 
 test("CT demo shows no next step, consultation, and specialist-added lab preparation", async ({ page }) => {
@@ -97,7 +121,7 @@ test("review, book, receive result, then approve one linked next step", async ({
   ).not.toBeVisible();
   await page.getByRole("button", { name: "Записаться", exact: true }).click();
   await expect(page.getByText("Вы записаны", { exact: false })).toBeVisible();
-  await expect(page.getByText("Запись подтверждена симулятором")).toBeVisible();
+  await expect(page.getByRole("status")).toContainText("Запись подтверждена");
   await page.screenshot({ path: "test-results/patient.png", fullPage: true });
   await page.getByRole("button", { name: "Специалист", exact: true }).click();
   await page.getByRole("button", { name: "Загрузить результат" }).click();
@@ -178,7 +202,7 @@ test("SR with unknown purpose requires manual choice; correction requires anothe
   ).toBeEnabled();
   await page.getByRole("button", { name: "Специалист", exact: true }).click();
   await page
-    .getByRole("button", { name: "Демо: получить исправленное заключение" })
+    .getByRole("button", { name: "Получить исправленное заключение" })
     .click();
   await expect(
     page.getByRole("button", { name: "Подтвердить маршрут" }),
@@ -290,6 +314,20 @@ test("small screen has no horizontal overflow", async ({ page }) => {
     ),
   ).toBe(true);
   await page.screenshot({ path: "test-results/mobile.png", fullPage: true });
+  await page.getByRole("button", { name: "Администратор", exact: true }).click();
+  await expect(page.locator(".case-journal-row").first()).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await page.getByRole("button", { name: "Пациент", exact: true }).click();
+  await expect(page.locator(".case-journal")).not.toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
 });
 
 test("deferred clinic booking appears only after feedback", async ({

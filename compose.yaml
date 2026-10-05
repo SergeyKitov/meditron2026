@@ -25,7 +25,7 @@ services:
       retries: 20
   migrate:
     <<: *backend
-    command: [sh, -c, 'alembic upgrade head && python -m app.seed']
+    command: [sh, -c, 'alembic upgrade head && MEDITRON_DEMO_RESET=compose python -m app.demo_reset && python -m app.seed']
     depends_on:
       db:
         condition: service_healthy

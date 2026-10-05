@@ -31,6 +31,15 @@ for label, raw in ports.items():
                 "Остановите прежний сервер или задайте MEDITRON_API_PORT и MEDITRON_WEB_PORT."
             )
 PY
+demo_db="$PWD/meditron.db"
+if [[ "${MEDITRON_DEMO_RESET:-1}" != "0" && "$DATABASE_URL" == "sqlite:///$demo_db" ]]; then
+  if [[ -e "$demo_db" ]] && command -v lsof >/dev/null 2>&1 && lsof -t "$demo_db" >/dev/null 2>&1; then
+    echo 'Демонстрационная база ещё открыта другим процессом. Остановите прежний сервер перед запуском.' >&2
+    exit 1
+  fi
+  rm -f -- "$demo_db" "$demo_db-wal" "$demo_db-shm"
+  echo 'Предыдущие случаи удалены; создаём новый набор пациентов.'
+fi
 .venv/bin/alembic upgrade head
 .venv/bin/python -m app.seed
 pids=()

@@ -416,9 +416,10 @@ main {
   text-align: center;
 }
 .case-number {
-  font-size: 8px;
-  letter-spacing: 1px;
-  color: #8c9d90;
+  font-size: 11px;
+  letter-spacing: .01em;
+  font-weight: 650;
+  color: #587664;
 }
 .case-card h3 {
   font-size: 12px;
@@ -1360,7 +1361,7 @@ textarea {
   }
 }
 
-/* Patient pathway: restrained, trust-first workspace for the three demo roles. */
+/* Patient pathway: restrained, trust-first workspace for the three roles. */
 :root { color: #193d34; background: #f2f6f3; }
 .layout { display: block; min-height: 100dvh; }
 .layout > main { margin: 0 auto; max-width: 1480px; padding: 0 42px; }
@@ -1371,7 +1372,6 @@ textarea {
 .role-switch button { padding: 9px 15px; border-radius: 8px; background: transparent; color: #557465; font-weight: 600; font-size: 12px; }
 .role-switch button.active { background: white; color: #164b3d; box-shadow: 0 1px 5px #164b3d1c; }
 .role-switch button:hover { color: #164b3d; }
-.top-note { white-space: nowrap; color: #719081; }
 .page-heading { padding: 42px 0 28px; }
 .page-heading h1 { font-size: clamp(30px, 3vw, 44px); line-height: 1.15; margin-bottom: 8px; }
 .page-heading p { font-size: 14px; color: #627d6e; }
@@ -1393,9 +1393,24 @@ textarea {
 .single-view .panel-content { padding: 34px 40px; }
 .back-to-list { display: block; background: transparent; color: #22614f; font-size: 13px; font-weight: 650; padding: 23px 40px 4px; }
 .back-to-list:hover { text-decoration: underline; }
-.case-picker { display: flex; gap: 16px; align-items: center; max-width: 530px; margin: 0 0 22px; }
-.case-picker label { min-width: max-content; color: #5c7868; font-size: 12px; font-weight: 600; }
-.case-picker select { color: #215444; background: white; }
+.case-journal { margin: 0 0 24px; overflow: hidden; border: 1px solid #d9e5de; border-radius: 13px; background: #fff; }
+.case-journal-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 18px 22px 13px; }
+.case-journal-heading h2 { margin: 0 0 2px; font-size: 18px; color: #193d34; }
+.case-journal-heading p { margin: 0; color: #708579; font-size: 12px; }
+.case-journal-heading > span { color: #60796a; font-size: 12px; white-space: nowrap; }
+.case-journal-columns, .case-journal-row { display: grid; grid-template-columns: minmax(150px, 1.15fr) minmax(210px, 1.8fr) minmax(100px, .7fr) minmax(130px, .9fr); align-items: center; gap: 16px; }
+.case-journal-columns { padding: 9px 22px; background: #f5f8f5; border-top: 1px solid #e5ede7; color: #71877a; font-size: 11px; font-weight: 650; }
+.case-journal-list { max-height: 262px; overflow-y: auto; }
+.case-journal-row { width: 100%; padding: 13px 22px; border-top: 1px solid #edf1ed; background: white; color: #24493b; text-align: left; }
+.case-journal-row:hover { background: #f2f7f3; }
+.case-journal-row.selected { background: #eaf4ed; box-shadow: inset 3px 0 #28624e; }
+.journal-patient { font-size: 13px; font-weight: 700; letter-spacing: .01em; }
+.journal-study { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.journal-study strong { font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.journal-study small, .journal-date { color: #708579; font-size: 11px; }
+.case-journal-row .badge { justify-self: start; }
+.case-journal-empty { padding: 24px 22px; color: #708579; font-size: 13px; }
+.study-patient { display: inline-block; margin: 4px 0 0; color: #547361; font-size: 13px; font-weight: 650; }
 .patient-panel { max-width: 950px; margin: 0 auto; }
 .patient-no-step { padding: 25px; margin: 16px 0 24px; border: 1px solid #d5e5d9; border-radius: 10px; background: #edf6ef; color: #214d3d; }
 .patient-no-step strong { display: block; font-size: 17px; margin-bottom: 8px; }
@@ -1405,7 +1420,6 @@ textarea {
 @media (max-width: 850px) {
   .layout > main { padding: 0 20px; }
   .topbar { padding: 15px 0; align-items: flex-start; flex-wrap: wrap; gap: 14px; }
-  .top-note { margin-left: auto; }
   .role-switch { order: 3; width: 100%; }
   .role-switch button { flex: 1; padding: 10px 6px; }
   .queue-view .case-list { grid-template-columns: repeat(2, minmax(0,1fr)); }
@@ -1414,7 +1428,6 @@ textarea {
   .layout > main { padding: 0 16px; }
   .topbar .brand { font-size: 19px; }
   .topbar .brand-mark { width: 33px; height: 33px; }
-  .top-note { font-size: 9px; }
   .page-heading { padding: 29px 0 20px; }
   .page-heading h1 { font-size: 31px; }
   .page-heading > .primary { width: 100%; }
@@ -1423,6 +1436,12 @@ textarea {
   .queue-view .case-card { width: 100%; min-height: 0; margin-bottom: 12px; }
   .single-view .panel-content { padding: 22px 18px; }
   .back-to-list { padding: 19px 18px 2px; }
-  .case-picker { display: block; }
-  .case-picker label { display: block; margin-bottom: 6px; }
+  .case-journal-heading { padding: 16px; }
+  .case-journal-columns { display: none; }
+  .case-journal-list { max-height: 310px; }
+  .case-journal-row { grid-template-columns: minmax(0, 1fr) auto; gap: 5px 12px; padding: 13px 16px; }
+  .journal-patient { grid-column: 1; }
+  .journal-study { grid-column: 1; grid-row: 2; }
+  .journal-date { grid-column: 2; grid-row: 1; }
+  .case-journal-row .badge { grid-column: 2; grid-row: 2; }
 }

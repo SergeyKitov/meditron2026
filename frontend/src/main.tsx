@@ -40,20 +40,20 @@ const eventName: Record<string, string> = {
   booking_confirmed: "Запись подтверждена",
   step_declined: "Пациент отказался от шага",
   step_resumed: "Пациент вернулся к шагу",
-  booking_submission_simulated: "Запрос передан · демо",
-  submit_booking_simulated: "Запрос подготовлен · демо",
+  booking_submission_simulated: "Запрос передан",
+  submit_booking_simulated: "Запрос подготовлен",
   booking_rejected: "Система записи отказала",
   action_completed: "Шаг выполнен",
   step_result_received: "Получен результат шага",
   prerequisite_result_received: "Получен результат подготовки",
   preparation_review_required: "Требуется повторная подготовка",
   cycle_closed: "Продолжение не требуется",
-  notification_simulated: "Уведомление подготовлено · демо",
+  notification_simulated: "Уведомление подготовлено",
   publish_route: "Передано на публикацию",
   route_rejected: "Маршрут отклонён",
   booking_cancelled: "Запись отменена",
   booking_cancellation_requested: "Запрошена отмена записи",
-  booking_cancellation_submission_simulated: "Запрос отмены передан · демо",
+  booking_cancellation_submission_simulated: "Запрос отмены передан",
   booking_cancellation_rejected: "Система записи отказала в отмене",
   coordinator_task_created: "Задача координатору",
   booking_reconciliation_required: "Проверить прежнюю запись",
@@ -88,6 +88,12 @@ const examPurposeName: Record<string, string> = {
 };
 const clinic = (p: string, profiles: Record<string, IntegrationProfile>) =>
   profiles[p]?.label ?? p;
+const patientLabel = (caseId: string) => `Пациент P-${caseId.slice(0, 6).toUpperCase()}`;
+const studyDate = (value: string) => new Date(value).toLocaleDateString("ru-RU");
+const displayConclusion = (value: string) => value
+  .replace(/\s*Синтетическое заключение\./g, "")
+  .replace("Синтетический неполный результат маммографии.", "Неполный результат маммографии.");
+const bookingReference = (value: string | null) => value ? value.replace(/^DEMO-/i, "") : "—";
 const time = (s: string) =>
   s === "no-slots"
     ? "Помощь с записью"
@@ -254,7 +260,13 @@ function App() {
           setCases(list);
           setMetrics(stats);
           setQualityReview(review);
-          if (!selected && list.length) setSelected(list[0].id);
+          if (!list.some((item) => item.id === selected)) {
+            setSelected(list[0]?.id ?? "");
+            setDetail(null);
+            setPatient(null);
+            setReviewerOpen(false);
+            setError("");
+          }
         }
       } catch (e) {
         if (!stopped) setError((e as Error).message);
@@ -365,9 +377,9 @@ function App() {
           status,
           reason:
             status === "rejected"
-              ? "Синтетический отказ: выбранное время недоступно"
+              ? "Выбранное время недоступно"
               : status === "cancel_rejected"
-                ? "Синтетический отказ: отмена уже недоступна"
+                ? "Отмена уже недоступна"
                 : "",
         }),
       status === "confirmed"
@@ -449,19 +461,18 @@ function App() {
           <a className="brand" href="/" aria-label="Patient pathway">
             <span className="brand-mark">P</span><span>Patient pathway</span>
           </a>
-          <div className="role-switch" role="group" aria-label="Демонстрационный профиль">
+          <div className="role-switch" role="group" aria-label="Профиль">
             {([ ["reviewer", "Специалист"], ["patient", "Пациент"], ["admin", "Администратор"] ] as const).map(([id, label]) => (
               <button key={id} type="button" className={role === id ? "active" : ""}
                 aria-pressed={role === id} onClick={() => switchRole(id)}>{label}</button>
             ))}
           </div>
-          <span className="top-note"><span className="live-dot" /> Демо · синтетические данные</span>
         </header>
         <section className="page-heading">
           <div>
             <div className="eyebrow">ОТ ЗАКЛЮЧЕНИЯ К СЛЕДУЮЩЕМУ ШАГУ</div>
             <h1>{role === "reviewer" ? "Заявки на валидацию" : role === "patient" ? "Кабинет пациента" : "История и воронка"}</h1>
-            <p>{role === "reviewer" ? "Проверьте следующий шаг до показа пациенту." : role === "patient" ? "Здесь доступен утверждённый следующий шаг и запись." : "События маршрута, решения и конверсия демонстрации."}</p>
+            <p>{role === "reviewer" ? "Проверьте следующий шаг до показа пациенту." : role === "patient" ? "Здесь доступен утверждённый следующий шаг и запись." : "События маршрута, решения и конверсия."}</p>
           </div>
           {role === "reviewer" && <button
             className="primary"
@@ -516,12 +527,33 @@ function App() {
             </button>
           </div>
         )}
-        {role !== "reviewer" && <div className="case-picker">
-          <label htmlFor="case-selector">Исследование для демонстрации</label>
-          <select id="case-selector" value={selected} onChange={(event) => choose(event.target.value)}>
-            {cases.map((item) => <option key={item.id} value={item.id}>{modality(item.modality)} · {item.id.slice(0, 6).toUpperCase()}</option>)}
-          </select>
-        </div>}
+        {role === "admin" && <section className="case-journal" aria-labelledby="case-journal-title">
+          <div className="case-journal-heading">
+            <div>
+              <h2 id="case-journal-title">Журнал исследований</h2>
+              <p>Выберите пациента и его исследование, чтобы открыть маршрут.</p>
+            </div>
+            <span>{cases.length} записей</span>
+          </div>
+          <div className="case-journal-columns" aria-hidden="true">
+            <span>Пациент</span><span>Исследование и клиника</span><span>Дата</span><span>Состояние</span>
+          </div>
+          <div className="case-journal-list">
+            {cases.map((item) => <button
+              type="button"
+              key={item.id}
+              className={`case-journal-row ${selected === item.id ? "selected" : ""}`}
+              aria-current={selected === item.id ? "true" : undefined}
+              onClick={() => choose(item.id)}
+            >
+              <strong className="journal-patient">{patientLabel(item.id)}</strong>
+              <span className="journal-study"><strong>{modality(item.modality)}</strong><small>{clinic(item.profile_id, profiles)}</small></span>
+              <span className="journal-date">{studyDate(item.created_at)}</span>
+              <Badge status={item.status} />
+            </button>)}
+            {!cases.length && <div className="case-journal-empty">Исследований пока нет.</div>}
+          </div>
+        </section>}
         <div className={`work-area ${role === "reviewer" && !reviewerOpen ? "queue-view" : "single-view"}`}>
           {role === "reviewer" && !reviewerOpen && <section className="case-list">
             <div className="list-heading">
@@ -540,12 +572,12 @@ function App() {
                     {c.modality === "MAMMOGRAPHY" ? "MMG" : "CT"}
                   </span>
                   <span className="case-number">
-                    СЛУЧАЙ {c.id.slice(0, 6).toUpperCase()}
+                    {patientLabel(c.id)}
                   </span>
                 </div>
                 <h3>{modality(c.modality)}</h3>
                 <p>{clinic(c.profile_id, profiles)}</p>
-                <p className="case-conclusion">{c.conclusion}</p>
+                <p className="case-conclusion">{displayConclusion(c.conclusion)}</p>
                 <div className="case-card-bottom">
                   <Badge status={c.status} />
                   <span>→</span>
@@ -554,12 +586,9 @@ function App() {
             ))}
             {!pendingCases.length && (
               <div className="empty small">
-                Сейчас нет заявок на проверку. Добавьте синтетическое исследование.
+                Сейчас нет заявок на проверку. Добавьте исследование.
               </div>
             )}
-            <div className="list-foot">
-              Данные для демонстрации · без персональных данных
-            </div>
           </section>}
           {(role !== "reviewer" || reviewerOpen) && <section className="detail">
             {role === "reviewer" && <button className="back-to-list" type="button" onClick={() => setReviewerOpen(false)}>← Все заявки на валидацию</button>}
@@ -578,11 +607,10 @@ function App() {
             </div>}
             {tab === "metrics" ? (
               <div className="panel-content">
-                <div className="eyebrow">СОБЫТИЯ ДЕМОНСТРАЦИИ</div>
+                <div className="eyebrow">СОБЫТИЯ МАРШРУТА</div>
                 <h2>Как проходит маршрут</h2>
                 <p className="muted">
-                  Независимые накопительные счётчики уникальных случаев. Это
-                  синтетический прогон, а не оценка клинической эффективности.
+                  Независимые накопительные счётчики уникальных случаев.
                 </p>
                 {metrics &&
                   Object.entries(metrics.counts).map(([key, value]) => (
@@ -644,8 +672,7 @@ function App() {
                   {metrics && ` (${metrics.routing_latency.count} заключений)`}.
                   Измерение начинается с разбора полей и заканчивается до коммита
                   проекта. Передача заключения, работа ИИ, решение специалиста и
-                  публикация в него не входят. Синтетическая выборка не подтверждает
-                  целевую задержку под нагрузкой.
+                  публикация в него не входят.
                 </p>
                 <p className="footnote">
                   Проект → решение специалиста: p95{" "}
@@ -755,6 +782,7 @@ function App() {
                         : "BFT JSON"}
                     </div>
                     <h2>{modality(detail.modality)}</h2>
+                    <span className="study-patient">{patientLabel(detail.id)}</span>
                   </div>
                   <Badge status={detail.proposal.status} />
                 </div>
@@ -763,7 +791,7 @@ function App() {
                     <span>Заключение ИИ</span>
                     <span>Версия {detail.report.source_version}</span>
                   </div>
-                  <p>{detail.report.conclusion}</p>
+                  <p>{displayConclusion(detail.report.conclusion)}</p>
                   <div className="facts">
                     {detail.report.facts.map((f) => (
                       <div
@@ -824,8 +852,7 @@ function App() {
                 <div className="review-note">
                   <span>◇</span>
                   <p>
-                    Демонстрационная гипотеза. Проверьте один следующий шаг, подготовку и основания
-                    перед подтверждением.
+                    Проверьте следующий шаг, подготовку и основания перед подтверждением.
                   </p>
                 </div>
                 {editable && (
@@ -890,7 +917,7 @@ function App() {
                   .filter((s) => s.booking?.status === "awaiting_confirmation")
                   .map((s) => (
                     <div className="simulator" key={`feedback-${s.key}`}>
-                      <h4>Ответ системы записи · демонстрация</h4>
+                      <h4>Ответ системы записи</h4>
                       <p>
                         {s.title} · {time(s.booking!.slot)}
                       </p>
@@ -960,7 +987,7 @@ function App() {
                     .map((b) => ({ booking: b, title: b.title })),
                 ].map(({ booking, title }) => (
                   <div className="simulator" key={`cancel-feedback-${booking.id}`}>
-                    <h4>Ответ системы записи по отмене · демонстрация</h4>
+                    <h4>Ответ системы записи по отмене</h4>
                     <p>{title} · {time(booking.slot)}</p>
                     <div className="inline-fields">
                       <button
@@ -1025,7 +1052,7 @@ function App() {
                   (s.prerequisites ?? []).filter((item) => item.booking?.status === "confirmed"),
                 ).map((item) => (
                   <div className="simulator" key={`lab-result-${item.key}`}>
-                    <h4>Результат подготовительного анализа · демо</h4>
+                    <h4>Результат подготовительного анализа</h4>
                     <p>{item.title}</p>
                     <div className="action-row">
                       <button
@@ -1065,7 +1092,7 @@ function App() {
                   .filter((s) => s.booking?.status === "confirmed")
                   .map((s) => (
                     <div className="simulator" key={s.key}>
-                      <h4>Результат шага · демонстрация</h4>
+                      <h4>Результат шага</h4>
                       <p>{s.title}</p>
                       {s.prerequisites?.some((item) => item.readiness !== "ready") && (
                         <p className="warning">До завершения шага нужны принятые результаты подготовки.</p>
@@ -1101,7 +1128,7 @@ function App() {
                                   route_id: detail.published_route!.id,
                                   step_key: s.key,
                                   outcome: outcomes[s.key] ?? "followup_needed",
-                                  note: "Синтетический результат из симулятора",
+                                  note: "Результат шага получен",
                                 }),
                               "Результат шага зарегистрирован",
                             )
@@ -1128,7 +1155,7 @@ function App() {
                     )
                   }
                 >
-                  Демо: получить исправленное заключение
+                  Получить исправленное заключение
                 </button>
               </div>
             ) : tab === "patient" ? (
@@ -1139,6 +1166,7 @@ function App() {
                 </div>
                 <div className="eyebrow">ПОСЛЕ ИССЛЕДОВАНИЯ</div>
                 <h2>Ваш следующий шаг</h2>
+                <span className="study-patient">{patientLabel(detail.id)} · {modality(detail.modality)}</span>
                 <p className="muted">
                   Здесь появляются рекомендации, которые подтвердил специалист.
                 </p>
@@ -1251,7 +1279,7 @@ function App() {
                               <strong>✓ Вы записаны</strong>
                               <p>{time(s.booking.slot)}</p>
                               <small>
-                                Номер записи {s.booking.external_ref}
+                                Номер записи {bookingReference(s.booking.external_ref)}
                               </small>
                               {s.booking.status_reason && (
                                 <p className="warning">{s.booking.status_reason}</p>
@@ -1292,7 +1320,7 @@ function App() {
                                 времени
                               </p>
                               <small>
-                                Номер запроса {s.booking.external_ref}
+                                Номер запроса {bookingReference(s.booking.external_ref)}
                               </small>
                             </div>
                           ) : s.choice?.status === "declined" ? (
@@ -1377,7 +1405,7 @@ function App() {
                                       ),
                                     (booking) =>
                                       booking.status === "confirmed"
-                                        ? "Запись подтверждена симулятором"
+                                        ? "Запись подтверждена"
                                         : "Запрос передан. Ожидаем подтверждения времени.",
                                   )
                                 }
@@ -1506,14 +1534,12 @@ function App() {
                     ))}
                   </section>
                 )}
-                <div className="patient-footer">
-                  Все записи и результаты на этом экране вымышлены.
-                </div>
               </div>
             ) : (
               <div className="panel-content">
                 <div className="eyebrow">ПРОЗРАЧНОСТЬ РЕШЕНИЙ</div>
                 <h2>История маршрута</h2>
+                <span className="study-patient">{patientLabel(detail.id)} · {modality(detail.modality)}</span>
                 <div className="version-chips">
                   {detail.history.map((h) => (
                     <span key={h.id}>
@@ -1550,7 +1576,6 @@ function App() {
         </div>
         <footer className="page-footer">
           <span>Patient pathway · следующий шаг после заключения</span>
-          <span>Синтетическая демонстрация</span>
         </footer>
       </main>
       {modal && (
@@ -1573,10 +1598,10 @@ function App() {
             </button>
             {modal === "new" ? (
               <>
-                <div className="eyebrow">СИНТЕТИЧЕСКИЙ СЦЕНАРИЙ</div>
+                <div className="eyebrow">ДАННЫЕ ИССЛЕДОВАНИЯ</div>
                 <h2>Новое исследование</h2>
                 <p className="muted">
-                  Выберите вход и клиническую ситуацию для демонстрации.
+                  Выберите источник, исследование и клиническую ситуацию.
                 </p>
                 <label>
                   Профиль подключения
@@ -1681,13 +1706,13 @@ function App() {
                             prerequisites: [{
                             key: "lab_1",
                             title: "Анализ по решению специалиста",
-                            description: "Синтетическая подготовка: результат нужен до выполнения консультации.",
+                            description: "Результат нужен до выполнения консультации.",
                             kind: "lab",
                             service_key: serviceKey,
                             gate: "before_execution",
                           }] }]);
                           setReasonCode("route_logic");
-                          setReason("Синтетический пример: специалист добавил подготовку перед консультацией.");
+                          setReason("Специалист добавил подготовку перед консультацией.");
                           setLabPreset(true);
                           setModal("edit");
                         }
@@ -1702,7 +1727,7 @@ function App() {
               <>
                 <div className="eyebrow">РЕШЕНИЕ СПЕЦИАЛИСТА</div>
                 <h2>Скорректировать путь</h2>
-                {labPreset && <p className="demo-scenario-note">Анализ предзаполнен только для демонстрации решения специалиста. Модель его не выбирала.</p>}
+                {labPreset && <p className="demo-scenario-note">Анализ добавляет специалист. Модель его не выбирала.</p>}
                 {editedSteps.map((s, i) => (
                   <div className="edit-step" key={s.key}>
                     <label>

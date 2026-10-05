@@ -67,6 +67,7 @@ export type CaseSummary = {
   profile_id: string;
   clinic_id: string;
   modality: string;
+  created_at: string;
   status: string;
   pending_review: boolean;
   conclusion: string;

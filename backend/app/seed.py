@@ -59,7 +59,7 @@ def main():
                 started_ns=started_ns,
             )
             created += 1
-    print(f"Добавлено {created} синтетических случаев; существующие сохранены")
+    print(f"Добавлено {created} случаев")
 
 
 if __name__ == "__main__":
