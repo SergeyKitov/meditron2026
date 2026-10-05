@@ -1,0 +1,23 @@
+{
+  "synthetic": true,
+  "status": "draft",
+  "step_keys": [
+    "review"
+  ],
+  "rule_status": "HYPOTHESIS",
+  "visible_before_approval": false,
+  "facts": [
+    {
+      "code": "ct_lc_num",
+      "value": 1
+    }
+  ],
+  "step_contract": [
+    {
+      "key": "review",
+      "action_type": "consultation",
+      "depends_on": [],
+      "unlock_on": []
+    }
+  ]
+}

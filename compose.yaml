@@ -1,0 +1,60 @@
+name: meditron-demo
+x-backend: &backend
+  build:
+    context: .
+    dockerfile: infra/backend.Dockerfile
+  environment:
+    DATABASE_URL: postgresql+psycopg://meditron:${POSTGRES_PASSWORD:-meditron_demo_only}@db:5432/meditron
+    MEDITRON_BOOKING_SECRET_PACS: ${MEDITRON_BOOKING_SECRET_PACS:-}
+    MEDITRON_REPORT_SECRET_PRIVATE: ${MEDITRON_REPORT_SECRET_PRIVATE:-}
+    MEDITRON_REPORT_SECRET_PACS: ${MEDITRON_REPORT_SECRET_PACS:-}
+  init: true
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: meditron
+      POSTGRES_DB: meditron
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-meditron_demo_only}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U meditron -d meditron']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  migrate:
+    <<: *backend
+    command: [sh, -c, 'alembic upgrade head && python -m app.seed']
+    depends_on:
+      db:
+        condition: service_healthy
+  api:
+    <<: *backend
+    ports:
+      - '127.0.0.1:8000:8000'
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+  worker:
+    <<: *backend
+    command: [python, -m, app.worker]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+  web:
+    build:
+      context: .
+      dockerfile: infra/frontend.Dockerfile
+    ports:
+      - '127.0.0.1:5173:80'
+    depends_on:
+      api:
+        condition: service_healthy
+volumes:
+  postgres-data:

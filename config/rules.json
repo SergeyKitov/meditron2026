@@ -1,0 +1,751 @@
+{
+  "version": "demo-2026.10.04-v3",
+  "status": "HYPOTHESIS",
+  "source": "Синтетические гипотезы одного следующего шага по docs/tag.json; последующие шаги выбираются после результата",
+  "required_fields": {
+    "MAMMOGRAPHY": [
+      "mmg_rads_right",
+      "mmg_rads_left"
+    ],
+    "CT_CHEST": [
+      "ct_lc_num"
+    ]
+  },
+  "rules": [
+    {
+      "id": "MMG-1-1",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 1
+        }
+      ],
+      "steps": []
+    },
+    {
+      "id": "MMG-1-2",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 2
+        }
+      ],
+      "steps": []
+    },
+    {
+      "id": "MMG-1-3",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 3
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Консультация специалиста по визуализации молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 3 хотя бы с одной стороны: обсудить контрольное исследование. Срок и метод определяет специалист.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-1-4",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 4
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Консультация специалиста по заболеваниям молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 4 хотя бы с одной стороны: требуется выбрать способ диагностической верификации. Категория не подтверждает диагноз рака.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-1-5",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 5
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Приоритетная консультация специалиста по заболеваниям молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 5 хотя бы с одной стороны: требуется без промедления согласовать план верификации. Категория не является подтверждённым диагнозом.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-2-1",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 1
+        }
+      ],
+      "steps": []
+    },
+    {
+      "id": "MMG-2-2",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 2
+        }
+      ],
+      "steps": []
+    },
+    {
+      "id": "MMG-2-3",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 3
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Консультация специалиста по визуализации молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 3 хотя бы с одной стороны: обсудить контрольное исследование. Срок и метод определяет специалист.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-2-4",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 4
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Консультация специалиста по заболеваниям молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 4 хотя бы с одной стороны: требуется выбрать способ диагностической верификации. Категория не подтверждает диагноз рака.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-2-5",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 5
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Приоритетная консультация специалиста по заболеваниям молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 5 хотя бы с одной стороны: требуется без промедления согласовать план верификации. Категория не является подтверждённым диагнозом.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-3-1",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 1
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Консультация специалиста по визуализации молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 3 хотя бы с одной стороны: обсудить контрольное исследование. Срок и метод определяет специалист.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-3-2",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 2
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Консультация специалиста по визуализации молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 3 хотя бы с одной стороны: обсудить контрольное исследование. Срок и метод определяет специалист.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-3-3",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 3
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Консультация специалиста по визуализации молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 3 хотя бы с одной стороны: обсудить контрольное исследование. Срок и метод определяет специалист.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-3-4",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 4
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Консультация специалиста по заболеваниям молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 4 хотя бы с одной стороны: требуется выбрать способ диагностической верификации. Категория не подтверждает диагноз рака.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-3-5",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 5
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Приоритетная консультация специалиста по заболеваниям молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 5 хотя бы с одной стороны: требуется без промедления согласовать план верификации. Категория не является подтверждённым диагнозом.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-4-1",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 1
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Консультация специалиста по заболеваниям молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 4 хотя бы с одной стороны: требуется выбрать способ диагностической верификации. Категория не подтверждает диагноз рака.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-4-2",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 2
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Консультация специалиста по заболеваниям молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 4 хотя бы с одной стороны: требуется выбрать способ диагностической верификации. Категория не подтверждает диагноз рака.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-4-3",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 3
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Консультация специалиста по заболеваниям молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 4 хотя бы с одной стороны: требуется выбрать способ диагностической верификации. Категория не подтверждает диагноз рака.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-4-4",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 4
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Консультация специалиста по заболеваниям молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 4 хотя бы с одной стороны: требуется выбрать способ диагностической верификации. Категория не подтверждает диагноз рака.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-4-5",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 5
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Приоритетная консультация специалиста по заболеваниям молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 5 хотя бы с одной стороны: требуется без промедления согласовать план верификации. Категория не является подтверждённым диагнозом.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-5-1",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 5
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 1
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Приоритетная консультация специалиста по заболеваниям молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 5 хотя бы с одной стороны: требуется без промедления согласовать план верификации. Категория не является подтверждённым диагнозом.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-5-2",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 5
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 2
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Приоритетная консультация специалиста по заболеваниям молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 5 хотя бы с одной стороны: требуется без промедления согласовать план верификации. Категория не является подтверждённым диагнозом.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-5-3",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 5
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 3
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Приоритетная консультация специалиста по заболеваниям молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 5 хотя бы с одной стороны: требуется без промедления согласовать план верификации. Категория не является подтверждённым диагнозом.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-5-4",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 5
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 4
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Приоритетная консультация специалиста по заболеваниям молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 5 хотя бы с одной стороны: требуется без промедления согласовать план верификации. Категория не является подтверждённым диагнозом.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "MMG-5-5",
+      "modality": "MAMMOGRAPHY",
+      "all": [
+        {
+          "field": "mmg_rads_right",
+          "op": "eq",
+          "value": 5
+        },
+        {
+          "field": "mmg_rads_left",
+          "op": "eq",
+          "value": 5
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Приоритетная консультация специалиста по заболеваниям молочной железы",
+          "action_type": "consultation",
+          "description": "BI-RADS 5 хотя бы с одной стороны: требуется без промедления согласовать план верификации. Категория не является подтверждённым диагнозом.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "CT-screening-0",
+      "modality": "CT_CHEST",
+      "all": [
+        {
+          "field": "exam_purpose",
+          "op": "eq",
+          "value": "screening"
+        },
+        {
+          "field": "ct_lc_num",
+          "op": "range",
+          "value": [
+            0,
+            0
+          ]
+        }
+      ],
+      "steps": []
+    },
+    {
+      "id": "CT-screening-1",
+      "modality": "CT_CHEST",
+      "all": [
+        {
+          "field": "exam_purpose",
+          "op": "eq",
+          "value": "screening"
+        },
+        {
+          "field": "ct_lc_num",
+          "op": "range",
+          "value": [
+            1,
+            1000
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Консультация пульмонолога по находке на КТ",
+          "action_type": "consultation",
+          "description": "На КТ отмечен как минимум один лёгочный узел. Доступно только число узлов: метод и срок дальнейших действий определяет специалист после оценки полного заключения.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    },
+    {
+      "id": "CT-diagnostic-0",
+      "modality": "CT_CHEST",
+      "all": [
+        {
+          "field": "exam_purpose",
+          "op": "eq",
+          "value": "diagnostic"
+        },
+        {
+          "field": "ct_lc_num",
+          "op": "range",
+          "value": [
+            0,
+            0
+          ]
+        }
+      ],
+      "steps": []
+    },
+    {
+      "id": "CT-diagnostic-1",
+      "modality": "CT_CHEST",
+      "all": [
+        {
+          "field": "exam_purpose",
+          "op": "eq",
+          "value": "diagnostic"
+        },
+        {
+          "field": "ct_lc_num",
+          "op": "range",
+          "value": [
+            1,
+            1000
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "key": "review",
+          "title": "Консультация пульмонолога по находке на КТ",
+          "action_type": "consultation",
+          "description": "На КТ отмечен как минимум один лёгочный узел. Доступно только число узлов: метод и срок дальнейших действий определяет специалист после оценки полного заключения.",
+          "depends_on": [],
+          "unlock_on": [],
+          "prerequisites": []
+        }
+      ]
+    }
+  ]
+}

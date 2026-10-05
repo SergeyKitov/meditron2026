@@ -1,0 +1,41 @@
+{
+  "status": "illustrative_scenario_not_observed_results",
+  "currency": "RUB",
+  "unit": "one_private_clinic_per_month",
+  "assumptions": {
+    "eligible_ai_reports": 800,
+    "incremental_confirmed_booking_conversion_pp": 3,
+    "extra_booking_to_attended_visit_rate": 0.8,
+    "contribution_margin_per_extra_attended_visit": 2500,
+    "hypothetical_monthly_license": 30000,
+    "hypothetical_vendor_variable_cost": 8000
+  },
+  "formulas": {
+    "extra_attended_visits": "eligible_ai_reports * incremental_confirmed_booking_conversion_pp / 100 * extra_booking_to_attended_visit_rate",
+    "clinic_incremental_contribution": "extra_attended_visits * contribution_margin_per_extra_attended_visit",
+    "clinic_net_before_integration": "clinic_incremental_contribution - hypothetical_monthly_license",
+    "clinic_break_even_uplift_pp": "100 * hypothetical_monthly_license / (eligible_ai_reports * extra_booking_to_attended_visit_rate * contribution_margin_per_extra_attended_visit)",
+    "vendor_monthly_gross_contribution": "hypothetical_monthly_license - hypothetical_vendor_variable_cost"
+  },
+  "scenario_result": {
+    "extra_attended_visits": 19.2,
+    "clinic_incremental_contribution": 48000,
+    "clinic_net_before_integration": 18000,
+    "clinic_break_even_uplift_pp": 1.875,
+    "vendor_monthly_gross_contribution": 22000
+  },
+  "sensitivity": [
+    {"uplift_pp": 1, "clinic_incremental_contribution": 16000, "clinic_net_before_integration": -14000},
+    {"uplift_pp": 3, "clinic_incremental_contribution": 48000, "clinic_net_before_integration": 18000},
+    {"uplift_pp": 5, "clinic_incremental_contribution": 80000, "clinic_net_before_integration": 50000}
+  ],
+  "not_included": [
+    "integration_and_procurement_cost",
+    "sales_cost_and_customer_acquisition",
+    "cancelled_visits_and_capacity_constraints",
+    "clinical_approval_time",
+    "real_conversion_uplift_or_causal_effect"
+  ],
+  "public_clinic_model": "Implementation and annual support are hypotheses; evaluate route completion, delay and staff workload instead of using private-clinic revenue uplift.",
+  "measurement": "Use first shown approved route version as denominator; confirmed booking for a step of the same version in a fixed window as numerator. To claim uplift, compare with a control group. Attendance requires trusted service-completion status."
+}

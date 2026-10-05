@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2920 840" width="2920" height="840">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#246653"/></marker></defs>
+<rect width="100%" height="100%" fill="#F7F8F4"/>
+<rect x="80" y="70" width="2780" height="225" rx="8" fill="#FFFFFF" stroke="#B6CEC0" stroke-width="2"/>
+<rect x="80" y="70" width="100" height="225" rx="8" fill="#EAF5ED"/>
+<line x1="180" y1="70" x2="180" y2="295" stroke="#B6CEC0" stroke-width="2"/>
+<text x="89" y="98" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#173B34">Patient</text>
+<text x="89" y="118" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#173B34">pathway ·</text>
+<text x="89" y="138" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#173B34">исполнение</text>
+<rect x="80" y="325" width="2780" height="225" rx="8" fill="#FFFFFF" stroke="#B6CEC0" stroke-width="2"/>
+<rect x="80" y="325" width="100" height="225" rx="8" fill="#EAF5ED"/>
+<line x1="180" y1="325" x2="180" y2="550" stroke="#B6CEC0" stroke-width="2"/>
+<text x="89" y="353" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#173B34">Пациент ·</text>
+<text x="89" y="373" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#173B34">кабинет</text>
+<rect x="80" y="580" width="2780" height="200" rx="8" fill="#FFFFFF" stroke="#B6CEC0" stroke-width="2"/>
+<rect x="80" y="580" width="100" height="200" rx="8" fill="#EAF5ED"/>
+<line x1="180" y1="580" x2="180" y2="780" stroke="#B6CEC0" stroke-width="2"/>
+<text x="89" y="608" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#173B34">Система</text>
+<text x="89" y="628" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#173B34">записи /</text>
+<text x="89" y="648" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#173B34">МИС</text>
+<polyline points="221,181 300,180" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="410,180 700,180" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="810,180 860,180" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="970,180 1040,180" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1150,180 1210,180" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1260,180 1360,145" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1310" y="155.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#637E73">да</text>
+<polyline points="1260,180 1360,260" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1310" y="213" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#637E73">нет</text>
+<polyline points="1360,260 755,260 755,215" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1470,145 1540,145" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1650,145 1720,145" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1770,145 1870,130" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1820" y="130.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#637E73">да</text>
+<polyline points="1770,145 1870,273" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1820" y="202" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#637E73">нет</text>
+<polyline points="1980,130 2055,130" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="221,438 300,438" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="410,438 470,438" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="520,438 700,410" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="610" y="417" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#637E73">да</text>
+<polyline points="520,438 580,510" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="550" y="467" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#637E73">нет</text>
+<polyline points="690,510 760,510" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="815,475 755,445" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="810,410 1040,410" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1150,410 1210,410" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1260,410 1390,413" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1325" y="404.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#637E73">да</text>
+<polyline points="1210,430 1170,430 1170,535 755,535 755,445" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="982.5" y="430.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#637E73">нет слота</text>
+<polyline points="881,683 960,683" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1070,683 1270,683" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1380,683 1440,683" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1490,683 1590,660" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1540" y="664.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#637E73">да</text>
+<polyline points="1700,660 1770,660" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1880,660 1960,660" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1490,683 1590,738" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1540" y="703.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#637E73">нет</text>
+<polyline points="355,215 203,420" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="8 6"/>
+<polyline points="755,375 755,215" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="8 6"/>
+<polyline points="915,215 863,665" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="8 6"/>
+<polyline points="1325,648 1095,215" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="8 6"/>
+<polyline points="1360,145 1150,410" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="8 6"/>
+<polyline points="1360,260 1150,410" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="8 6"/>
+<polyline points="1825,625 1595,180" fill="none" stroke="#246653" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="8 6"/>
+<circle cx="203" cy="181" r="18" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="203" y="216" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#173B34">Версия утверждена</text>
+<rect x="300" y="145" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="355" y="167" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Показать</text>
+<text x="355" y="185" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">доступный</text>
+<text x="355" y="203" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">шаг</text>
+<rect x="700" y="145" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="755" y="167" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Получить</text>
+<text x="755" y="185" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">запрос</text>
+<text x="755" y="203" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">записи</text>
+<rect x="860" y="145" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="915" y="176" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Запросить</text>
+<text x="915" y="194" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">слот</text>
+<rect x="1040" y="145" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="1095" y="176" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Получить</text>
+<text x="1095" y="194" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">статус</text>
+<polygon points="1235,155 1260,180 1235,205 1210,180" fill="#FFF3DA" stroke="#D6A352" stroke-width="2"/>
+<text x="1235" y="185" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#925D20">×</text>
+<text x="1235" y="222" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#173B34">Подтверждено?</text>
+<rect x="1360" y="225" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="1415" y="256" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Сообщить:</text>
+<text x="1415" y="274" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">нет слота</text>
+<rect x="1360" y="110" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="1415" y="141" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Показать</text>
+<text x="1415" y="159" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">подтверждение</text>
+<rect x="1540" y="110" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="1595" y="132" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Результат</text>
+<text x="1595" y="150" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">услуги и</text>
+<text x="1595" y="168" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">подготовки</text>
+<polygon points="1745,120 1770,145 1745,170 1720,145" fill="#FFF3DA" stroke="#D6A352" stroke-width="2"/>
+<text x="1745" y="150" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#925D20">×</text>
+<text x="1745" y="187" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#173B34">Нужен ещё шаг?</text>
+<rect x="1870" y="95" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="1925" y="117" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Создать</text>
+<text x="1925" y="135" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">проект</text>
+<text x="1925" y="153" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">одного шага</text>
+<circle cx="2073" cy="130" r="18" fill="#FFFFFF" stroke="#246653" stroke-width="3"/>
+<text x="2073" y="165" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#173B34">Ждёт решения</text>
+<circle cx="1888" cy="273" r="18" fill="#FFFFFF" stroke="#246653" stroke-width="3"/>
+<text x="1888" y="308" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#173B34">Маршрут завершён</text>
+<circle cx="203" cy="438" r="18" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="203" y="473" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#173B34">Путь показан</text>
+<rect x="300" y="403" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="355" y="425" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Изучить</text>
+<text x="355" y="443" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">доступный</text>
+<text x="355" y="461" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">шаг</text>
+<polygon points="495,413 520,438 495,463 470,438" fill="#FFF3DA" stroke="#D6A352" stroke-width="2"/>
+<text x="495" y="443" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#925D20">×</text>
+<text x="495" y="480" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#173B34">Записаться?</text>
+<rect x="580" y="475" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="635" y="497" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Отказ +</text>
+<text x="635" y="515" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">категория</text>
+<text x="635" y="533" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">причины</text>
+<rect x="760" y="475" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="815" y="506" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Вернуться к</text>
+<text x="815" y="524" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">записи</text>
+<rect x="700" y="375" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="755" y="406" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Выбрать</text>
+<text x="755" y="424" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">время</text>
+<rect x="1040" y="375" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="1095" y="406" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Получить</text>
+<text x="1095" y="424" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">статус</text>
+<polygon points="1235,385 1260,410 1235,435 1210,410" fill="#FFF3DA" stroke="#D6A352" stroke-width="2"/>
+<text x="1235" y="415" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#925D20">×</text>
+<text x="1235" y="452" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#173B34">Подтверждено?</text>
+<circle cx="1408" cy="413" r="18" fill="#FFFFFF" stroke="#246653" stroke-width="3"/>
+<text x="1408" y="448" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#173B34">Ожидать визит</text>
+<circle cx="863" cy="683" r="18" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="863" y="718" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#173B34">Запрос получен</text>
+<rect x="960" y="648" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="1015" y="679" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Проверить /</text>
+<text x="1015" y="697" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">занять слот</text>
+<rect x="1270" y="648" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="1325" y="670" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Отдать</text>
+<text x="1325" y="688" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">статус</text>
+<text x="1325" y="706" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">записи</text>
+<polygon points="1465,658 1490,683 1465,708 1440,683" fill="#FFF3DA" stroke="#D6A352" stroke-width="2"/>
+<text x="1465" y="688" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#925D20">×</text>
+<text x="1465" y="725" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#173B34">Подтверждено?</text>
+<rect x="1590" y="625" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="1645" y="656" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Результат</text>
+<text x="1645" y="674" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">услуги</text>
+<rect x="1770" y="625" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#246653" stroke-width="2"/>
+<text x="1825" y="656" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">Передать</text>
+<text x="1825" y="674" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#173B34">результат</text>
+<circle cx="1978" cy="660" r="18" fill="#FFFFFF" stroke="#246653" stroke-width="3"/>
+<text x="1978" y="695" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#173B34">Готово</text>
+<circle cx="1608" cy="738" r="18" fill="#FFFFFF" stroke="#246653" stroke-width="3"/>
+<text x="1608" y="773" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#173B34">Нет слота</text>
+</svg>

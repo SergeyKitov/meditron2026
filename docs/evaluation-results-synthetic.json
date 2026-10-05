@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "evidence_level": "synthetic_fixture_agreement_only",
+  "configuration": {
+    "release_id": "c7a0a82b43224e578278acdd43845a57",
+    "ruleset_version": "demo-2026.10.04-v3",
+    "profile_versions": {
+      "private": "demo-1",
+      "pacs": "demo-1"
+    }
+  },
+  "sample": {
+    "scenarios": 7,
+    "representations": 14
+  },
+  "strata": {
+    "CT_CHEST:diagnostic": {
+      "scenarios": 2,
+      "representations": 4,
+      "exact_facts": 4,
+      "exact_routes": 4,
+      "unsafe_auto_routes": 0
+    },
+    "CT_CHEST:screening": {
+      "scenarios": 1,
+      "representations": 2,
+      "exact_facts": 2,
+      "exact_routes": 2,
+      "unsafe_auto_routes": 0
+    },
+    "CT_CHEST:unknown": {
+      "scenarios": 1,
+      "representations": 2,
+      "exact_facts": 2,
+      "exact_routes": 2,
+      "unsafe_auto_routes": 0
+    },
+    "MAMMOGRAPHY:diagnostic": {
+      "scenarios": 3,
+      "representations": 6,
+      "exact_facts": 6,
+      "exact_routes": 6,
+      "unsafe_auto_routes": 0
+    }
+  },
+  "fact_extraction": {
+    "true_positive": 18,
+    "false_positive": 0,
+    "false_negative": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "exact_representations": 14
+  },
+  "routing": {
+    "status_correct": 14,
+    "exact_representations": 14,
+    "exact_step_contract_representations": 14,
+    "expected_manual": 4,
+    "manual_caught": 4,
+    "unsafe_auto_routes": 0,
+    "unnecessary_abstentions": 0,
+    "step_keys_on_expected_drafts": {
+      "true_positive": 6,
+      "false_positive": 0,
+      "false_negative": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    }
+  },
+  "cross_format_parity": {
+    "matching_scenarios": 7,
+    "mismatching_scenarios": 0
+  },
+  "errors": []
+}

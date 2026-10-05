@@ -1,0 +1,14 @@
+{
+  "synthetic": true,
+  "status": "manual",
+  "step_keys": [],
+  "rule_status": "HYPOTHESIS",
+  "visible_before_approval": false,
+  "facts": [
+    {
+      "code": "mmg_rads_right",
+      "value": 4
+    }
+  ],
+  "step_contract": []
+}

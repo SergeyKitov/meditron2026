@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "version": "catboost-synthetic-2026.10.05-v1",
+  "source": "synthetic_teacher_only",
+  "source_sha256": "f1c4b591e5a5c65344cb6ceee985f5c928dac4614540cbf5ac223a7206af256b",
+  "artifact_sha256": "54cd8b667e5640e645e19283d5e7941675ed75ef53daa422be87b0119cbcbc58",
+  "clinical_validation": false,
+  "features": [
+    "modality",
+    "exam_purpose",
+    "mmg_rads_right",
+    "mmg_rads_left",
+    "ct_lc_num"
+  ],
+  "required_fields": {
+    "MAMMOGRAPHY": [
+      "mmg_rads_right",
+      "mmg_rads_left"
+    ],
+    "CT_CHEST": [
+      "ct_lc_num"
+    ]
+  },
+  "classes": [
+    "route_0",
+    "route_1",
+    "route_2",
+    "route_3",
+    "route_4"
+  ],
+  "outputs": {
+    "route_0": [],
+    "route_1": [
+      {
+        "key": "review",
+        "title": "Консультация специалиста по визуализации молочной железы",
+        "action_type": "consultation",
+        "description": "BI-RADS 3 хотя бы с одной стороны: обсудить контрольное исследование. Срок и метод определяет специалист.",
+        "depends_on": [],
+        "unlock_on": [],
+        "prerequisites": []
+      }
+    ],
+    "route_2": [
+      {
+        "key": "review",
+        "title": "Консультация специалиста по заболеваниям молочной железы",
+        "action_type": "consultation",
+        "description": "BI-RADS 4 хотя бы с одной стороны: требуется выбрать способ диагностической верификации. Категория не подтверждает диагноз рака.",
+        "depends_on": [],
+        "unlock_on": [],
+        "prerequisites": []
+      }
+    ],
+    "route_3": [
+      {
+        "key": "review",
+        "title": "Приоритетная консультация специалиста по заболеваниям молочной железы",
+        "action_type": "consultation",
+        "description": "BI-RADS 5 хотя бы с одной стороны: требуется без промедления согласовать план верификации. Категория не является подтверждённым диагнозом.",
+        "depends_on": [],
+        "unlock_on": [],
+        "prerequisites": []
+      }
+    ],
+    "route_4": [
+      {
+        "key": "review",
+        "title": "Консультация пульмонолога по находке на КТ",
+        "action_type": "consultation",
+        "description": "На КТ отмечен как минимум один лёгочный узел. Доступно только число узлов: метод и срок дальнейших действий определяет специалист после оценки полного заключения.",
+        "depends_on": [],
+        "unlock_on": [],
+        "prerequisites": []
+      }
+    ]
+  },
+  "abstain_below": 0.5,
+  "training_cases": 76,
+  "training_class_counts": {
+    "route_0": 10,
+    "route_1": 10,
+    "route_2": 14,
+    "route_3": 18,
+    "route_4": 24
+  },
+  "synthetic_teacher_fidelity": 1.0,
+  "independent_clinical_score": null
+}

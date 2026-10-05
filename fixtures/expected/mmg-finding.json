@@ -1,0 +1,27 @@
+{
+  "synthetic": true,
+  "status": "draft",
+  "step_keys": [
+    "review"
+  ],
+  "rule_status": "HYPOTHESIS",
+  "visible_before_approval": false,
+  "facts": [
+    {
+      "code": "mmg_rads_right",
+      "value": 4
+    },
+    {
+      "code": "mmg_rads_left",
+      "value": 2
+    }
+  ],
+  "step_contract": [
+    {
+      "key": "review",
+      "action_type": "consultation",
+      "depends_on": [],
+      "unlock_on": []
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "profile_id": "private",
+  "context": {
+    "encounter_ref": "synthetic-fixture-4",
+    "source_version": 1,
+    "modality": "CT_CHEST",
+    "exam_purpose": "diagnostic"
+  },
+  "report": {
+    "synthetic": true,
+    "studyIUID": "1.2.826.0.1.3680043.10.2026.100.4",
+    "aiResult": {
+      "modelId": 1000,
+      "modelVersion": "synthetic-1",
+      "report": "КТ ОГК: один лёгочный узел. Синтетическое заключение.",
+      "conclusion": "КТ ОГК: один лёгочный узел. Синтетическое заключение.",
+      "probParams": {
+        "ct_lc": {
+          "ct_lc_num": 1
+        }
+      }
+    }
+  }
+}

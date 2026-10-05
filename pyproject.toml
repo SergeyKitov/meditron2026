@@ -1,0 +1,26 @@
+[project]
+name = "meditron"
+version = "0.1.0"
+description = "Synthetic, clinician-reviewed patient routing demonstrator"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "fastapi>=0.115,<1", "uvicorn>=0.30,<1", "pydantic>=2.9,<3",
+  "sqlalchemy>=2.0,<3", "alembic>=1.13,<2", "psycopg[binary]>=3.2,<4",
+  "pydicom>=3.0,<4", "python-multipart>=0.0.18,<1",
+  "catboost>=1.2,<2"
+]
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "httpx>=0.27,<1", "ruff>=0.9,<1"]
+
+[tool.pytest.ini_options]
+pythonpath = ["backend"]
+testpaths = ["backend/tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["E501"]

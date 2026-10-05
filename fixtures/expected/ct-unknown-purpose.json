@@ -1,0 +1,14 @@
+{
+  "synthetic": true,
+  "status": "manual",
+  "step_keys": [],
+  "rule_status": "HYPOTHESIS",
+  "visible_before_approval": false,
+  "facts": [
+    {
+      "code": "ct_lc_num",
+      "value": 1
+    }
+  ],
+  "step_contract": []
+}

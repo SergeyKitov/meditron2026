@@ -1,0 +1,602 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="patient_pathway_pitch_bpmn" name="Patient pathway — путь пациента" targetNamespace="https://patient-pathway.example/pitch/bpmn" exporter="Patient pathway project" exporterVersion="1.0">
+  <bpmn:collaboration id="visit_collaboration" name="01 · Формирование и утверждение во время приёма">
+    <bpmn:participant id="visit_ai_participant" name="ИИ / источник заключения" processRef="visit_ai_process" />
+    <bpmn:participant id="visit_core_participant" name="Patient pathway · маршрут" processRef="visit_core_process" />
+    <bpmn:participant id="visit_reviewer_participant" name="Уполномоченный специалист" processRef="visit_reviewer_process" />
+    <bpmn:messageFlow id="visit_m_report" sourceRef="visit_send_report" targetRef="visit_report_received" name="Заключение + технический ID" />
+    <bpmn:messageFlow id="visit_m_proposal" sourceRef="visit_send_proposal" targetRef="visit_proposal_received" name="Версия маршрута + trace" />
+    <bpmn:messageFlow id="visit_m_decision" sourceRef="visit_send_decision" targetRef="visit_receive_decision" name="Утверждение или правка" />
+  </bpmn:collaboration>
+  <bpmn:process id="visit_ai_process" isExecutable="false">
+    <bpmn:startEvent id="visit_ai_start" name="SR готов" />
+    <bpmn:sendTask id="visit_send_report" name="Передать JSON / SR" />
+    <bpmn:endEvent id="visit_ai_end" name="Передано" />
+    <bpmn:sequenceFlow id="visit_ai_f1" sourceRef="visit_ai_start" targetRef="visit_send_report" />
+    <bpmn:sequenceFlow id="visit_ai_f2" sourceRef="visit_send_report" targetRef="visit_ai_end" />
+  </bpmn:process>
+  <bpmn:process id="visit_core_process" isExecutable="false">
+    <bpmn:startEvent id="visit_report_received" name="Заключение получено">
+      <bpmn:messageEventDefinition id="visit_report_received_message" />
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="visit_parse" name="Разобрать по профилю" />
+    <bpmn:exclusiveGateway id="visit_complete" name="Фактов достаточно?" />
+    <bpmn:serviceTask id="visit_propose" name="CatBoost: проект + поля влияния" />
+    <bpmn:userTask id="visit_manual" name="Ручной проект" />
+    <bpmn:exclusiveGateway id="visit_merge" name="" />
+    <bpmn:sendTask id="visit_send_proposal" name="Показать специалисту" />
+    <bpmn:receiveTask id="visit_receive_decision" name="Получить решение" />
+    <bpmn:exclusiveGateway id="visit_approved" name="Утверждено?" />
+    <bpmn:serviceTask id="visit_save_revision" name="Новая ручная версия" />
+    <bpmn:serviceTask id="visit_publish" name="Опубликовать версию" />
+    <bpmn:sendTask id="visit_notify" name="Передать в кабинет" />
+    <bpmn:endEvent id="visit_core_end" name="Путь доступен" />
+    <bpmn:sequenceFlow id="visit_c1" sourceRef="visit_report_received" targetRef="visit_parse" />
+    <bpmn:sequenceFlow id="visit_c2" sourceRef="visit_parse" targetRef="visit_complete" />
+    <bpmn:sequenceFlow id="visit_c3" sourceRef="visit_complete" targetRef="visit_propose" name="да" />
+    <bpmn:sequenceFlow id="visit_c4" sourceRef="visit_complete" targetRef="visit_manual" name="нет" />
+    <bpmn:sequenceFlow id="visit_c5" sourceRef="visit_propose" targetRef="visit_merge" />
+    <bpmn:sequenceFlow id="visit_c6" sourceRef="visit_manual" targetRef="visit_merge" />
+    <bpmn:sequenceFlow id="visit_c7" sourceRef="visit_merge" targetRef="visit_send_proposal" />
+    <bpmn:sequenceFlow id="visit_c8" sourceRef="visit_send_proposal" targetRef="visit_receive_decision" />
+    <bpmn:sequenceFlow id="visit_c9" sourceRef="visit_receive_decision" targetRef="visit_approved" />
+    <bpmn:sequenceFlow id="visit_c10" sourceRef="visit_approved" targetRef="visit_publish" name="да" />
+    <bpmn:sequenceFlow id="visit_c11" sourceRef="visit_approved" targetRef="visit_save_revision" name="правка / отклонение" />
+    <bpmn:sequenceFlow id="visit_c12" sourceRef="visit_publish" targetRef="visit_notify" />
+    <bpmn:sequenceFlow id="visit_c13" sourceRef="visit_notify" targetRef="visit_core_end" />
+    <bpmn:sequenceFlow id="visit_c14" sourceRef="visit_save_revision" targetRef="visit_send_proposal" name="повторная проверка" />
+  </bpmn:process>
+  <bpmn:process id="visit_reviewer_process" isExecutable="false">
+    <bpmn:startEvent id="visit_proposal_received" name="Проект показан">
+      <bpmn:messageEventDefinition id="visit_proposal_received_message" />
+    </bpmn:startEvent>
+    <bpmn:userTask id="visit_review" name="Проверить основания" />
+    <bpmn:exclusiveGateway id="visit_review_choice" name="Принять?" />
+    <bpmn:userTask id="visit_approve_route" name="Подтвердить версию" />
+    <bpmn:userTask id="visit_edit_route" name="Исправить + причина" />
+    <bpmn:exclusiveGateway id="visit_review_merge" name="" />
+    <bpmn:sendTask id="visit_send_decision" name="Передать решение" />
+    <bpmn:endEvent id="visit_review_end" name="Решение сохранено" />
+    <bpmn:sequenceFlow id="visit_r1" sourceRef="visit_proposal_received" targetRef="visit_review" />
+    <bpmn:sequenceFlow id="visit_r2" sourceRef="visit_review" targetRef="visit_review_choice" />
+    <bpmn:sequenceFlow id="visit_r3" sourceRef="visit_review_choice" targetRef="visit_approve_route" name="да" />
+    <bpmn:sequenceFlow id="visit_r4" sourceRef="visit_review_choice" targetRef="visit_edit_route" name="нет" />
+    <bpmn:sequenceFlow id="visit_r5" sourceRef="visit_approve_route" targetRef="visit_review_merge" />
+    <bpmn:sequenceFlow id="visit_r6" sourceRef="visit_edit_route" targetRef="visit_review_merge" />
+    <bpmn:sequenceFlow id="visit_r7" sourceRef="visit_review_merge" targetRef="visit_send_decision" />
+    <bpmn:sequenceFlow id="visit_r8" sourceRef="visit_send_decision" targetRef="visit_review_end" />
+  </bpmn:process>
+  <bpmn:collaboration id="follow_collaboration" name="02 · Показ, подготовка и новый цикл после результата">
+    <bpmn:participant id="follow_core_participant" name="Patient pathway · исполнение" processRef="follow_core_process" />
+    <bpmn:participant id="follow_patient_participant" name="Пациент · кабинет" processRef="follow_patient_process" />
+    <bpmn:participant id="follow_booking_participant" name="Система записи / МИС" processRef="follow_booking_process" />
+    <bpmn:messageFlow id="follow_m_route" sourceRef="follow_show_route" targetRef="follow_route_seen" name="Утверждённый маршрут" />
+    <bpmn:messageFlow id="follow_m_patient_request" sourceRef="follow_request" targetRef="follow_receive_request" name="Запрос записи" />
+    <bpmn:messageFlow id="follow_m_booking_request" sourceRef="follow_book" targetRef="follow_booking_request" name="Бронь слота" />
+    <bpmn:messageFlow id="follow_m_booking_status" sourceRef="follow_send_status" targetRef="follow_booking_status" name="Статус" />
+    <bpmn:messageFlow id="follow_m_patient_status" sourceRef="follow_confirm" targetRef="follow_status" name="Подтверждение" />
+    <bpmn:messageFlow id="follow_m_patient_no_slots" sourceRef="follow_no_slots" targetRef="follow_status" name="Нет слота" />
+    <bpmn:messageFlow id="follow_m_result" sourceRef="follow_send_result" targetRef="follow_result" name="Результат выполненного шага" />
+  </bpmn:collaboration>
+  <bpmn:process id="follow_core_process" isExecutable="false">
+    <bpmn:startEvent id="follow_approved_start" name="Версия утверждена" />
+    <bpmn:sendTask id="follow_show_route" name="Показать доступный шаг" />
+    <bpmn:receiveTask id="follow_receive_request" name="Получить запрос записи" />
+    <bpmn:sendTask id="follow_book" name="Запросить слот" />
+    <bpmn:receiveTask id="follow_booking_status" name="Получить статус" />
+    <bpmn:exclusiveGateway id="follow_is_confirmed" name="Подтверждено?" />
+    <bpmn:sendTask id="follow_no_slots" name="Сообщить: нет слота" />
+    <bpmn:sendTask id="follow_confirm" name="Показать подтверждение" />
+    <bpmn:receiveTask id="follow_result" name="Результат услуги и подготовки" />
+    <bpmn:exclusiveGateway id="follow_condition" name="Нужен ещё шаг?" />
+    <bpmn:serviceTask id="follow_next" name="Создать проект одного шага" />
+    <bpmn:endEvent id="follow_core_continue" name="Ждёт решения" />
+    <bpmn:endEvent id="follow_core_finish" name="Маршрут завершён" />
+    <bpmn:sequenceFlow id="follow_c1" sourceRef="follow_approved_start" targetRef="follow_show_route" />
+    <bpmn:sequenceFlow id="follow_c2" sourceRef="follow_show_route" targetRef="follow_receive_request" />
+    <bpmn:sequenceFlow id="follow_c3" sourceRef="follow_receive_request" targetRef="follow_book" />
+    <bpmn:sequenceFlow id="follow_c4" sourceRef="follow_book" targetRef="follow_booking_status" />
+    <bpmn:sequenceFlow id="follow_c5" sourceRef="follow_booking_status" targetRef="follow_is_confirmed" />
+    <bpmn:sequenceFlow id="follow_c6" sourceRef="follow_is_confirmed" targetRef="follow_confirm" name="да" />
+    <bpmn:sequenceFlow id="follow_c7" sourceRef="follow_is_confirmed" targetRef="follow_no_slots" name="нет" />
+    <bpmn:sequenceFlow id="follow_c8" sourceRef="follow_no_slots" targetRef="follow_receive_request" />
+    <bpmn:sequenceFlow id="follow_c9" sourceRef="follow_confirm" targetRef="follow_result" />
+    <bpmn:sequenceFlow id="follow_c10" sourceRef="follow_result" targetRef="follow_condition" />
+    <bpmn:sequenceFlow id="follow_c11" sourceRef="follow_condition" targetRef="follow_next" name="да" />
+    <bpmn:sequenceFlow id="follow_c12" sourceRef="follow_condition" targetRef="follow_core_finish" name="нет" />
+    <bpmn:sequenceFlow id="follow_c13" sourceRef="follow_next" targetRef="follow_core_continue" />
+  </bpmn:process>
+  <bpmn:process id="follow_patient_process" isExecutable="false">
+    <bpmn:startEvent id="follow_route_seen" name="Путь показан">
+      <bpmn:messageEventDefinition id="follow_route_seen_message" />
+    </bpmn:startEvent>
+    <bpmn:userTask id="follow_view" name="Изучить доступный шаг" />
+    <bpmn:exclusiveGateway id="follow_choice" name="Записаться?" />
+    <bpmn:userTask id="follow_decline" name="Отказ + категория причины" />
+    <bpmn:userTask id="follow_resume" name="Вернуться к записи" />
+    <bpmn:sendTask id="follow_request" name="Выбрать время" />
+    <bpmn:receiveTask id="follow_status" name="Получить статус" />
+    <bpmn:exclusiveGateway id="follow_status_choice" name="Подтверждено?" />
+    <bpmn:endEvent id="follow_patient_end" name="Ожидать визит" />
+    <bpmn:sequenceFlow id="follow_p1" sourceRef="follow_route_seen" targetRef="follow_view" />
+    <bpmn:sequenceFlow id="follow_p2" sourceRef="follow_view" targetRef="follow_choice" />
+    <bpmn:sequenceFlow id="follow_p3" sourceRef="follow_choice" targetRef="follow_request" name="да" />
+    <bpmn:sequenceFlow id="follow_p4" sourceRef="follow_choice" targetRef="follow_decline" name="нет" />
+    <bpmn:sequenceFlow id="follow_p5" sourceRef="follow_decline" targetRef="follow_resume" />
+    <bpmn:sequenceFlow id="follow_p6" sourceRef="follow_resume" targetRef="follow_request" />
+    <bpmn:sequenceFlow id="follow_p7" sourceRef="follow_request" targetRef="follow_status" />
+    <bpmn:sequenceFlow id="follow_p8" sourceRef="follow_status" targetRef="follow_status_choice" />
+    <bpmn:sequenceFlow id="follow_p9" sourceRef="follow_status_choice" targetRef="follow_patient_end" name="да" />
+    <bpmn:sequenceFlow id="follow_p10" sourceRef="follow_status_choice" targetRef="follow_request" name="нет слота" />
+  </bpmn:process>
+  <bpmn:process id="follow_booking_process" isExecutable="false">
+    <bpmn:startEvent id="follow_booking_request" name="Запрос получен">
+      <bpmn:messageEventDefinition id="follow_booking_request_message" />
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="follow_reserve" name="Проверить / занять слот" />
+    <bpmn:sendTask id="follow_send_status" name="Отдать статус записи" />
+    <bpmn:exclusiveGateway id="follow_after_status" name="Подтверждено?" />
+    <bpmn:receiveTask id="follow_performed" name="Результат услуги" />
+    <bpmn:sendTask id="follow_send_result" name="Передать результат" />
+    <bpmn:endEvent id="follow_booking_end" name="Готово" />
+    <bpmn:endEvent id="follow_no_slot_end" name="Нет слота" />
+    <bpmn:sequenceFlow id="follow_b1" sourceRef="follow_booking_request" targetRef="follow_reserve" />
+    <bpmn:sequenceFlow id="follow_b2" sourceRef="follow_reserve" targetRef="follow_send_status" />
+    <bpmn:sequenceFlow id="follow_b4" sourceRef="follow_send_status" targetRef="follow_after_status" />
+    <bpmn:sequenceFlow id="follow_b5" sourceRef="follow_after_status" targetRef="follow_performed" name="да" />
+    <bpmn:sequenceFlow id="follow_b6" sourceRef="follow_performed" targetRef="follow_send_result" />
+    <bpmn:sequenceFlow id="follow_b7" sourceRef="follow_send_result" targetRef="follow_booking_end" />
+    <bpmn:sequenceFlow id="follow_b8" sourceRef="follow_after_status" targetRef="follow_no_slot_end" name="нет" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="visit_diagram">
+    <bpmndi:BPMNPlane id="visit_plane" bpmnElement="visit_collaboration">
+      <bpmndi:BPMNShape id="visit_ai_participant_di" bpmnElement="visit_ai_participant" isHorizontal="true">
+        <dc:Bounds x="80" y="70" width="1940" height="130" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_core_participant_di" bpmnElement="visit_core_participant" isHorizontal="true">
+        <dc:Bounds x="80" y="230" width="1940" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_reviewer_participant_di" bpmnElement="visit_reviewer_participant" isHorizontal="true">
+        <dc:Bounds x="80" y="510" width="1940" height="190" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_ai_start_di" bpmnElement="visit_ai_start">
+        <dc:Bounds x="190" y="115" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_send_report_di" bpmnElement="visit_send_report">
+        <dc:Bounds x="300" y="98" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_ai_end_di" bpmnElement="visit_ai_end">
+        <dc:Bounds x="485" y="115" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="visit_ai_f1_di" bpmnElement="visit_ai_f1">
+        <di:waypoint x="226" y="133.0" />
+        <di:waypoint x="300" y="133.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_ai_f2_di" bpmnElement="visit_ai_f2">
+        <di:waypoint x="410" y="133.0" />
+        <di:waypoint x="485" y="133.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="visit_report_received_di" bpmnElement="visit_report_received">
+        <dc:Bounds x="190" y="335" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_parse_di" bpmnElement="visit_parse">
+        <dc:Bounds x="300" y="318" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_complete_di" bpmnElement="visit_complete">
+        <dc:Bounds x="465" y="335" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_propose_di" bpmnElement="visit_propose">
+        <dc:Bounds x="620" y="270" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_manual_di" bpmnElement="visit_manual">
+        <dc:Bounds x="620" y="385" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_merge_di" bpmnElement="visit_merge">
+        <dc:Bounds x="800" y="335" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_send_proposal_di" bpmnElement="visit_send_proposal">
+        <dc:Bounds x="910" y="318" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_receive_decision_di" bpmnElement="visit_receive_decision">
+        <dc:Bounds x="1070" y="318" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_approved_di" bpmnElement="visit_approved">
+        <dc:Bounds x="1230" y="335" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_save_revision_di" bpmnElement="visit_save_revision">
+        <dc:Bounds x="1385" y="395" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_publish_di" bpmnElement="visit_publish">
+        <dc:Bounds x="1385" y="270" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_notify_di" bpmnElement="visit_notify">
+        <dc:Bounds x="1545" y="270" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_core_end_di" bpmnElement="visit_core_end">
+        <dc:Bounds x="1730" y="287" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="visit_c1_di" bpmnElement="visit_c1">
+        <di:waypoint x="226" y="353.0" />
+        <di:waypoint x="300" y="353.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_c2_di" bpmnElement="visit_c2">
+        <di:waypoint x="410" y="353.0" />
+        <di:waypoint x="465" y="360.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_c3_di" bpmnElement="visit_c3">
+        <di:waypoint x="515" y="360.0" />
+        <di:waypoint x="620" y="305.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_c4_di" bpmnElement="visit_c4">
+        <di:waypoint x="515" y="360.0" />
+        <di:waypoint x="620" y="420.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_c5_di" bpmnElement="visit_c5">
+        <di:waypoint x="730" y="305.0" />
+        <di:waypoint x="800" y="360.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_c6_di" bpmnElement="visit_c6">
+        <di:waypoint x="730" y="420.0" />
+        <di:waypoint x="800" y="360.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_c7_di" bpmnElement="visit_c7">
+        <di:waypoint x="850" y="360.0" />
+        <di:waypoint x="910" y="353.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_c8_di" bpmnElement="visit_c8">
+        <di:waypoint x="1020" y="353.0" />
+        <di:waypoint x="1070" y="353.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_c9_di" bpmnElement="visit_c9">
+        <di:waypoint x="1180" y="353.0" />
+        <di:waypoint x="1230" y="360.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_c10_di" bpmnElement="visit_c10">
+        <di:waypoint x="1280" y="360.0" />
+        <di:waypoint x="1385" y="305.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_c11_di" bpmnElement="visit_c11">
+        <di:waypoint x="1280" y="360.0" />
+        <di:waypoint x="1385" y="430.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_c12_di" bpmnElement="visit_c12">
+        <di:waypoint x="1495" y="305.0" />
+        <di:waypoint x="1545" y="305.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_c13_di" bpmnElement="visit_c13">
+        <di:waypoint x="1655" y="305.0" />
+        <di:waypoint x="1730" y="305.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_c14_di" bpmnElement="visit_c14">
+        <di:waypoint x="1385" y="430" />
+        <di:waypoint x="1340" y="430" />
+        <di:waypoint x="1340" y="465" />
+        <di:waypoint x="965" y="465" />
+        <di:waypoint x="965" y="388" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="visit_proposal_received_di" bpmnElement="visit_proposal_received">
+        <dc:Bounds x="900" y="580" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_review_di" bpmnElement="visit_review">
+        <dc:Bounds x="1020" y="563" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_review_choice_di" bpmnElement="visit_review_choice">
+        <dc:Bounds x="1180" y="580" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_approve_route_di" bpmnElement="visit_approve_route">
+        <dc:Bounds x="1325" y="530" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_edit_route_di" bpmnElement="visit_edit_route">
+        <dc:Bounds x="1325" y="625" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_review_merge_di" bpmnElement="visit_review_merge">
+        <dc:Bounds x="1480" y="580" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_send_decision_di" bpmnElement="visit_send_decision">
+        <dc:Bounds x="1595" y="563" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="visit_review_end_di" bpmnElement="visit_review_end">
+        <dc:Bounds x="1780" y="580" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="visit_r1_di" bpmnElement="visit_r1">
+        <di:waypoint x="936" y="598.0" />
+        <di:waypoint x="1020" y="598.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_r2_di" bpmnElement="visit_r2">
+        <di:waypoint x="1130" y="598.0" />
+        <di:waypoint x="1180" y="605.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_r3_di" bpmnElement="visit_r3">
+        <di:waypoint x="1230" y="605.0" />
+        <di:waypoint x="1325" y="565.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_r4_di" bpmnElement="visit_r4">
+        <di:waypoint x="1230" y="605.0" />
+        <di:waypoint x="1325" y="660.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_r5_di" bpmnElement="visit_r5">
+        <di:waypoint x="1435" y="565.0" />
+        <di:waypoint x="1480" y="605.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_r6_di" bpmnElement="visit_r6">
+        <di:waypoint x="1435" y="660.0" />
+        <di:waypoint x="1480" y="605.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_r7_di" bpmnElement="visit_r7">
+        <di:waypoint x="1530" y="605.0" />
+        <di:waypoint x="1595" y="598.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_r8_di" bpmnElement="visit_r8">
+        <di:waypoint x="1705" y="598.0" />
+        <di:waypoint x="1780" y="598.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_m_report_di" bpmnElement="visit_m_report">
+        <di:waypoint x="355.0" y="168" />
+        <di:waypoint x="208.0" y="335" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_m_proposal_di" bpmnElement="visit_m_proposal">
+        <di:waypoint x="965.0" y="388" />
+        <di:waypoint x="918.0" y="580" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="visit_m_decision_di" bpmnElement="visit_m_decision">
+        <di:waypoint x="1595" y="598.0" />
+        <di:waypoint x="1180" y="353.0" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="follow_diagram">
+    <bpmndi:BPMNPlane id="follow_plane" bpmnElement="follow_collaboration">
+      <bpmndi:BPMNShape id="follow_core_participant_di" bpmnElement="follow_core_participant" isHorizontal="true">
+        <dc:Bounds x="80" y="70" width="2780" height="225" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_patient_participant_di" bpmnElement="follow_patient_participant" isHorizontal="true">
+        <dc:Bounds x="80" y="325" width="2780" height="225" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_booking_participant_di" bpmnElement="follow_booking_participant" isHorizontal="true">
+        <dc:Bounds x="80" y="580" width="2780" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_approved_start_di" bpmnElement="follow_approved_start">
+        <dc:Bounds x="185" y="163" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_show_route_di" bpmnElement="follow_show_route">
+        <dc:Bounds x="300" y="145" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_receive_request_di" bpmnElement="follow_receive_request">
+        <dc:Bounds x="700" y="145" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_book_di" bpmnElement="follow_book">
+        <dc:Bounds x="860" y="145" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_booking_status_di" bpmnElement="follow_booking_status">
+        <dc:Bounds x="1040" y="145" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_is_confirmed_di" bpmnElement="follow_is_confirmed">
+        <dc:Bounds x="1210" y="155" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_no_slots_di" bpmnElement="follow_no_slots">
+        <dc:Bounds x="1360" y="225" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_confirm_di" bpmnElement="follow_confirm">
+        <dc:Bounds x="1360" y="110" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_result_di" bpmnElement="follow_result">
+        <dc:Bounds x="1540" y="110" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_condition_di" bpmnElement="follow_condition">
+        <dc:Bounds x="1720" y="120" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_next_di" bpmnElement="follow_next">
+        <dc:Bounds x="1870" y="95" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_core_continue_di" bpmnElement="follow_core_continue">
+        <dc:Bounds x="2055" y="112" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_core_finish_di" bpmnElement="follow_core_finish">
+        <dc:Bounds x="1870" y="255" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="follow_c1_di" bpmnElement="follow_c1">
+        <di:waypoint x="221" y="181.0" />
+        <di:waypoint x="300" y="180.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_c2_di" bpmnElement="follow_c2">
+        <di:waypoint x="410" y="180.0" />
+        <di:waypoint x="700" y="180.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_c3_di" bpmnElement="follow_c3">
+        <di:waypoint x="810" y="180.0" />
+        <di:waypoint x="860" y="180.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_c4_di" bpmnElement="follow_c4">
+        <di:waypoint x="970" y="180.0" />
+        <di:waypoint x="1040" y="180.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_c5_di" bpmnElement="follow_c5">
+        <di:waypoint x="1150" y="180.0" />
+        <di:waypoint x="1210" y="180.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_c6_di" bpmnElement="follow_c6">
+        <di:waypoint x="1260" y="180.0" />
+        <di:waypoint x="1360" y="145.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_c7_di" bpmnElement="follow_c7">
+        <di:waypoint x="1260" y="180.0" />
+        <di:waypoint x="1360" y="260.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_c8_di" bpmnElement="follow_c8">
+        <di:waypoint x="1360" y="260" />
+        <di:waypoint x="755" y="260" />
+        <di:waypoint x="755" y="215" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_c9_di" bpmnElement="follow_c9">
+        <di:waypoint x="1470" y="145.0" />
+        <di:waypoint x="1540" y="145.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_c10_di" bpmnElement="follow_c10">
+        <di:waypoint x="1650" y="145.0" />
+        <di:waypoint x="1720" y="145.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_c11_di" bpmnElement="follow_c11">
+        <di:waypoint x="1770" y="145.0" />
+        <di:waypoint x="1870" y="130.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_c12_di" bpmnElement="follow_c12">
+        <di:waypoint x="1770" y="145.0" />
+        <di:waypoint x="1870" y="273.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_c13_di" bpmnElement="follow_c13">
+        <di:waypoint x="1980" y="130.0" />
+        <di:waypoint x="2055" y="130.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="follow_route_seen_di" bpmnElement="follow_route_seen">
+        <dc:Bounds x="185" y="420" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_view_di" bpmnElement="follow_view">
+        <dc:Bounds x="300" y="403" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_choice_di" bpmnElement="follow_choice">
+        <dc:Bounds x="470" y="413" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_decline_di" bpmnElement="follow_decline">
+        <dc:Bounds x="580" y="475" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_resume_di" bpmnElement="follow_resume">
+        <dc:Bounds x="760" y="475" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_request_di" bpmnElement="follow_request">
+        <dc:Bounds x="700" y="375" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_status_di" bpmnElement="follow_status">
+        <dc:Bounds x="1040" y="375" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_status_choice_di" bpmnElement="follow_status_choice">
+        <dc:Bounds x="1210" y="385" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_patient_end_di" bpmnElement="follow_patient_end">
+        <dc:Bounds x="1390" y="395" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="follow_p1_di" bpmnElement="follow_p1">
+        <di:waypoint x="221" y="438.0" />
+        <di:waypoint x="300" y="438.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_p2_di" bpmnElement="follow_p2">
+        <di:waypoint x="410" y="438.0" />
+        <di:waypoint x="470" y="438.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_p3_di" bpmnElement="follow_p3">
+        <di:waypoint x="520" y="438.0" />
+        <di:waypoint x="700" y="410.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_p4_di" bpmnElement="follow_p4">
+        <di:waypoint x="520" y="438.0" />
+        <di:waypoint x="580" y="510.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_p5_di" bpmnElement="follow_p5">
+        <di:waypoint x="690" y="510.0" />
+        <di:waypoint x="760" y="510.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_p6_di" bpmnElement="follow_p6">
+        <di:waypoint x="815.0" y="475" />
+        <di:waypoint x="755.0" y="445" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_p7_di" bpmnElement="follow_p7">
+        <di:waypoint x="810" y="410.0" />
+        <di:waypoint x="1040" y="410.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_p8_di" bpmnElement="follow_p8">
+        <di:waypoint x="1150" y="410.0" />
+        <di:waypoint x="1210" y="410.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_p9_di" bpmnElement="follow_p9">
+        <di:waypoint x="1260" y="410.0" />
+        <di:waypoint x="1390" y="413.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_p10_di" bpmnElement="follow_p10">
+        <di:waypoint x="1210" y="430" />
+        <di:waypoint x="1170" y="430" />
+        <di:waypoint x="1170" y="535" />
+        <di:waypoint x="755" y="535" />
+        <di:waypoint x="755" y="445" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="follow_booking_request_di" bpmnElement="follow_booking_request">
+        <dc:Bounds x="845" y="665" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_reserve_di" bpmnElement="follow_reserve">
+        <dc:Bounds x="960" y="648" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_send_status_di" bpmnElement="follow_send_status">
+        <dc:Bounds x="1270" y="648" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_after_status_di" bpmnElement="follow_after_status">
+        <dc:Bounds x="1440" y="658" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_performed_di" bpmnElement="follow_performed">
+        <dc:Bounds x="1590" y="625" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_send_result_di" bpmnElement="follow_send_result">
+        <dc:Bounds x="1770" y="625" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_booking_end_di" bpmnElement="follow_booking_end">
+        <dc:Bounds x="1960" y="642" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="follow_no_slot_end_di" bpmnElement="follow_no_slot_end">
+        <dc:Bounds x="1590" y="720" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="follow_b1_di" bpmnElement="follow_b1">
+        <di:waypoint x="881" y="683.0" />
+        <di:waypoint x="960" y="683.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_b2_di" bpmnElement="follow_b2">
+        <di:waypoint x="1070" y="683.0" />
+        <di:waypoint x="1270" y="683.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_b4_di" bpmnElement="follow_b4">
+        <di:waypoint x="1380" y="683.0" />
+        <di:waypoint x="1440" y="683.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_b5_di" bpmnElement="follow_b5">
+        <di:waypoint x="1490" y="683.0" />
+        <di:waypoint x="1590" y="660.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_b6_di" bpmnElement="follow_b6">
+        <di:waypoint x="1700" y="660.0" />
+        <di:waypoint x="1770" y="660.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_b7_di" bpmnElement="follow_b7">
+        <di:waypoint x="1880" y="660.0" />
+        <di:waypoint x="1960" y="660.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_b8_di" bpmnElement="follow_b8">
+        <di:waypoint x="1490" y="683.0" />
+        <di:waypoint x="1590" y="738.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_m_route_di" bpmnElement="follow_m_route">
+        <di:waypoint x="355.0" y="215" />
+        <di:waypoint x="203.0" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_m_patient_request_di" bpmnElement="follow_m_patient_request">
+        <di:waypoint x="755.0" y="375" />
+        <di:waypoint x="755.0" y="215" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_m_booking_request_di" bpmnElement="follow_m_booking_request">
+        <di:waypoint x="915.0" y="215" />
+        <di:waypoint x="863.0" y="665" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_m_booking_status_di" bpmnElement="follow_m_booking_status">
+        <di:waypoint x="1325.0" y="648" />
+        <di:waypoint x="1095.0" y="215" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_m_patient_status_di" bpmnElement="follow_m_patient_status">
+        <di:waypoint x="1360" y="145.0" />
+        <di:waypoint x="1150" y="410.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_m_patient_no_slots_di" bpmnElement="follow_m_patient_no_slots">
+        <di:waypoint x="1360" y="260.0" />
+        <di:waypoint x="1150" y="410.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="follow_m_result_di" bpmnElement="follow_m_result">
+        <di:waypoint x="1825.0" y="625" />
+        <di:waypoint x="1595.0" y="180" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

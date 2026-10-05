@@ -1,0 +1,426 @@
+{
+  "schema_version": "candidate-routing-catalog/1",
+  "catalog_version": "2026-10-04-draft-2",
+  "status": "HYPOTHESIS_MEDICAL_APPROVAL_REQUIRED",
+  "origin": "docs/tag.source.json — исходные 21 строки пользователя сохранены без изменений; каталог содержит только 8 выбранных сценариев MVP",
+  "purpose": "Кандидаты маршрута и причины выбора первого шага по уже готовому заключению ИИ. Не диагностика и не проверка снимка.",
+  "usage_policy": {
+    "execution_state": "REFERENCE_CATALOG_NOT_LOADED_AT_RUNTIME",
+    "review_gate": "Любой проект и его точная версия подтверждаются уполномоченным специалистом до показа пациенту.",
+    "text_matching": "origin_labels и variant служат человеку; поиск по подстроке заключения не является триггером. Для автоматики нужны согласованные структурированные поля SR/JSON.",
+    "tests": "optional_research_for_specialist — варианты для решения специалиста, не автоматические назначения и не цепочка всех перечисленных исследований.",
+    "urgency": "urgent_handoff означает передачу клинической команде во время приёма, без самостоятельной плановой записи.",
+    "patient_display": "Показывать только подтверждённую формулировку первого шага; не называть подозрение доказанным диагнозом.",
+    "multiple_findings": "Несколько находок требуют объединения и приоритизации специалистом; карточки нельзя просто складывать в список обязательных визитов.",
+    "result_gate": "Следующий клинический шаг проектируется только после результата текущего и нового решения специалиста; заранее второй шаг не создаётся.",
+    "missing_data": "Если нужные структурированные факты или контекст отсутствуют, только ручное решение."
+  },
+  "source_registry": {
+    "INPUT": {
+      "title": "Исходный tag.source.json пользователя",
+      "url": null,
+      "role": "тема для гипотезы, не медицинское обоснование"
+    },
+    "ACR_BIRADS": {
+      "title": "ACR BI-RADS и справочная карточка категорий",
+      "url": "https://cs.acr.org/-/media/ACR/Files/RADS/BI-RADS/BIRADS-Reference-Card.pdf",
+      "role": "термины категорий и рамка дальнейшей оценки"
+    },
+    "ACR_LUNGRADS": {
+      "title": "ACR Lung-RADS v2022",
+      "url": "https://www.acr.org/-/media/ACR/Files/RADS/Lung-RADS/Lung-RADS-2022.pdf",
+      "role": "только скрининговая КТ лёгких"
+    },
+    "FLEISCHNER": {
+      "title": "Fleischner Society 2017",
+      "url": "https://pubs.rsna.org/doi/10.1148/radiol.2017161659",
+      "role": "случайные узлы КТ, с исключениями по возрасту, онкоанамнезу и иммунному статусу"
+    },
+    "CAC_CONSENSUS": {
+      "title": "BSCI/BSCCT/BSTI incidental CAC consensus",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7774698/",
+      "role": "оценка факторов риска; находка не ведёт автоматически к инвазивной диагностике"
+    },
+    "THIRD_OPINION_CT": {
+      "title": "Третье Мнение — КТ органов грудной клетки",
+      "url": "https://thirdopinion.ai/chest_ct",
+      "role": "публичные примеры измеряемых признаков; не промышленный контракт полей"
+    },
+    "THIRD_OPINION_MMG": {
+      "title": "Третье Мнение — маммография",
+      "url": "https://thirdopinion.ai/mmg",
+      "role": "публичный пример протокола с PGMI, ACR и BI-RADS; не промышленный контракт"
+    }
+  },
+  "entries": [
+    {
+      "id": "MMG-BIRADS-1-2",
+      "section": "Маммография",
+      "variant": "BI-RADS 1–2: отрицательный или доброкачественный результат",
+      "origin_labels": [
+        "Доброкачественные образования"
+      ],
+      "phase": "MVP",
+      "routing_mode": "no_new_step",
+      "priority_for_review": "routine",
+      "signal": {
+        "fields": [
+          "mmg_rads_right",
+          "mmg_rads_left"
+        ],
+        "mapping": "1–5 доступны в синтетическом профиле; 0 и 6 требуют изменения профиля",
+        "matching": "Сравнить обе стороны; более требующая внимания категория определяет первоочередной проект.",
+        "machine_predicate": {
+          "type": "both_in",
+          "fields": [
+            "mmg_rads_right",
+            "mmg_rads_left"
+          ],
+          "values": [
+            1,
+            2
+          ]
+        },
+        "mapping_status": "field_available_catalog_not_executed"
+      },
+      "specialist_candidates": [],
+      "reason_for_route": "По одной категории 1–2 нет основания автоматически предлагать биопсию или внеплановую консультацию.",
+      "first_step_candidate": "Новый шаг не формировать; специалист подтверждает план обычного наблюдения",
+      "optional_research_for_specialist": [],
+      "required_context_or_limitations": [
+        "Интервал следующего скрининга зависит от программы и клинического контекста, которого у нас нет."
+      ],
+      "next_step_gate": null,
+      "references": [
+        "ACR_BIRADS",
+        "THIRD_OPINION_MMG"
+      ],
+      "public_signal_examples": [
+        "BI-RADS по стороне",
+        "PGMI и плотность ACR как дополнительные сведения; сейчас не входят в правила"
+      ],
+      "patient_text_template": null
+    },
+    {
+      "id": "MMG-BIRADS-3",
+      "section": "Маммография",
+      "variant": "BI-RADS 3: вероятно доброкачественная находка",
+      "origin_labels": [
+        "Доброкачественные образования"
+      ],
+      "phase": "MVP",
+      "routing_mode": "candidate_for_review",
+      "priority_for_review": "routine",
+      "signal": {
+        "fields": [
+          "mmg_rads_right",
+          "mmg_rads_left"
+        ],
+        "mapping": "1–5 доступны в синтетическом профиле; 0 и 6 требуют изменения профиля",
+        "matching": "Только при обеих допустимых категориях 1–5; категория 0/6, конфликт или отсутствие поля переводят случай на ручное решение.",
+        "machine_predicate": {
+          "type": "max_of_1_to_5_equals",
+          "fields": [
+            "mmg_rads_right",
+            "mmg_rads_left"
+          ],
+          "values": [
+            3
+          ]
+        },
+        "mapping_status": "field_available_catalog_not_executed"
+      },
+      "specialist_candidates": [
+        "специалист по визуализации молочной железы",
+        "специалист по заболеваниям молочной железы"
+      ],
+      "reason_for_route": "Для вероятно доброкачественной находки может требоваться согласованное контрольное исследование; срок и метод подтверждает специалист.",
+      "first_step_candidate": "Согласовать контрольное исследование молочной железы",
+      "optional_research_for_specialist": [
+        "контрольная маммография или УЗИ по протоколу учреждения"
+      ],
+      "required_context_or_limitations": [
+        "Категория 3 должна быть итоговой оценкой после необходимого дообследования."
+      ],
+      "next_step_gate": "После результата текущего шага создать новый проект одного шага и направить его специалисту на утверждение.",
+      "references": [
+        "ACR_BIRADS",
+        "THIRD_OPINION_MMG"
+      ],
+      "public_signal_examples": [
+        "BI-RADS по стороне",
+        "PGMI и плотность ACR как дополнительные сведения; сейчас не входят в правила"
+      ],
+      "patient_text_template": "Специалист рекомендует: Согласовать контрольное исследование молочной железы."
+    },
+    {
+      "id": "MMG-BIRADS-4",
+      "section": "Маммография",
+      "variant": "BI-RADS 4: подозрительная находка",
+      "origin_labels": [
+        "Рак молочной железы"
+      ],
+      "phase": "MVP",
+      "routing_mode": "candidate_for_review",
+      "priority_for_review": "prompt",
+      "signal": {
+        "fields": [
+          "mmg_rads_right",
+          "mmg_rads_left"
+        ],
+        "mapping": "1–5 доступны в синтетическом профиле; 0 и 6 требуют изменения профиля",
+        "matching": "Только при обеих допустимых категориях 1–5; категория 0/6, конфликт или отсутствие поля переводят случай на ручное решение.",
+        "machine_predicate": {
+          "type": "max_of_1_to_5_equals",
+          "fields": [
+            "mmg_rads_right",
+            "mmg_rads_left"
+          ],
+          "values": [
+            4
+          ]
+        },
+        "mapping_status": "field_available_catalog_not_executed"
+      },
+      "specialist_candidates": [
+        "специалист по заболеваниям молочной железы",
+        "онколог по маршруту учреждения"
+      ],
+      "reason_for_route": "Подозрительная находка требует диагностического решения; изображение не подтверждает рак.",
+      "first_step_candidate": "Приоритетная консультация для определения способа верификации находки",
+      "optional_research_for_specialist": [
+        "прицельная визуализация и биопсия только после решения специалиста"
+      ],
+      "required_context_or_limitations": [
+        "Не показывать пациенту диагноз «рак» по заключению ИИ; не назначать биопсию автоматически."
+      ],
+      "next_step_gate": "После результата текущего шага создать новый проект одного шага и направить его специалисту на утверждение.",
+      "references": [
+        "ACR_BIRADS",
+        "THIRD_OPINION_MMG"
+      ],
+      "public_signal_examples": [
+        "BI-RADS по стороне",
+        "PGMI и плотность ACR как дополнительные сведения; сейчас не входят в правила"
+      ],
+      "patient_text_template": "Специалист рекомендует: Приоритетная консультация для определения способа верификации находки."
+    },
+    {
+      "id": "MMG-BIRADS-5",
+      "section": "Маммография",
+      "variant": "BI-RADS 5: высокая подозрительность",
+      "origin_labels": [
+        "Рак молочной железы"
+      ],
+      "phase": "MVP",
+      "routing_mode": "candidate_for_review",
+      "priority_for_review": "prompt",
+      "signal": {
+        "fields": [
+          "mmg_rads_right",
+          "mmg_rads_left"
+        ],
+        "mapping": "1–5 доступны в синтетическом профиле; 0 и 6 требуют изменения профиля",
+        "matching": "Только при обеих допустимых категориях 1–5; категория 0/6, конфликт или отсутствие поля переводят случай на ручное решение.",
+        "machine_predicate": {
+          "type": "max_of_1_to_5_equals",
+          "fields": [
+            "mmg_rads_right",
+            "mmg_rads_left"
+          ],
+          "values": [
+            5
+          ]
+        },
+        "mapping_status": "field_available_catalog_not_executed"
+      },
+      "specialist_candidates": [
+        "специалист по заболеваниям молочной железы",
+        "онколог по маршруту учреждения"
+      ],
+      "reason_for_route": "Высокая подозрительность усиливает приоритет клинической оценки и верификации, но не заменяет гистологический диагноз.",
+      "first_step_candidate": "Оперативно согласовать консультацию и план верификации",
+      "optional_research_for_specialist": [
+        "биопсия и дальнейшие исследования — по решению профильного специалиста"
+      ],
+      "required_context_or_limitations": [
+        "Не формулировать подтверждённый рак и не бронировать инвазивную процедуру по одному SR."
+      ],
+      "next_step_gate": "После результата текущего шага создать новый проект одного шага и направить его специалисту на утверждение.",
+      "references": [
+        "ACR_BIRADS",
+        "THIRD_OPINION_MMG"
+      ],
+      "public_signal_examples": [
+        "BI-RADS по стороне",
+        "PGMI и плотность ACR как дополнительные сведения; сейчас не входят в правила"
+      ],
+      "patient_text_template": "Специалист рекомендует: Оперативно согласовать консультацию и план верификации."
+    },
+    {
+      "id": "CT-NODULE-UNKNOWN-PURPOSE",
+      "section": "КТ органов грудной клетки",
+      "variant": "Узел или очаг при неизвестной цели КТ",
+      "origin_labels": [
+        "Лёгочные очаги и образования"
+      ],
+      "phase": "MVP",
+      "routing_mode": "manual_only",
+      "priority_for_review": "routine",
+      "signal": {
+        "fields": [
+          "ct_lc_num"
+        ],
+        "mapping": "Доступно в синтетическом профиле",
+        "matching": "Число узлов > 0 не даёт размера, типа, роста и клинического риска.",
+        "machine_predicate": {
+          "type": "integer_gt",
+          "field": "ct_lc_num",
+          "value": 0
+        },
+        "mapping_status": "field_available_but_context_insufficient"
+      },
+      "specialist_candidates": [
+        "пульмонолог",
+        "специалист, проводящий приём"
+      ],
+      "reason_for_route": "Само число очагов не определяет наблюдение, биопсию или онкологическое направление; алгоритм зависит от цели исследования и признаков узла.",
+      "first_step_candidate": "Индивидуально разобрать находку во время приёма",
+      "optional_research_for_specialist": [],
+      "required_context_or_limitations": [
+        "Нет размера, типа, роста, возраста, онкоанамнеза и подтверждённого screening/diagnostic."
+      ],
+      "next_step_gate": "После результата текущего шага создать новый проект одного шага и направить его специалисту на утверждение.",
+      "references": [
+        "FLEISCHNER",
+        "ACR_LUNGRADS",
+        "THIRD_OPINION_CT"
+      ],
+      "public_signal_examples": [
+        "число, размер и характеристики лёгочных очагов"
+      ],
+      "patient_text_template": null
+    },
+    {
+      "id": "CT-PLEURAL-EFFUSION",
+      "section": "КТ органов грудной клетки",
+      "variant": "Плевральный выпот",
+      "origin_labels": [
+        "Плевральный выпот"
+      ],
+      "phase": "MVP_EXTENSION",
+      "routing_mode": "manual_only",
+      "priority_for_review": "prompt",
+      "signal": {
+        "fields": [],
+        "mapping": "Согласовать код структурированного поля SR/JSON; текстовый ярлык не является правилом сопоставления.",
+        "machine_predicate": null,
+        "mapping_status": "field_not_in_current_profile"
+      },
+      "specialist_candidates": [
+        "пульмонолог",
+        "врач текущего приёма",
+        "торакальный хирург по показаниям"
+      ],
+      "reason_for_route": "Причина и значимость выпота не определяются самим названием находки; объём, симптомы и динамику оценивает специалист.",
+      "first_step_candidate": "Оценить выпот и определить необходимость дообследования",
+      "optional_research_for_specialist": [
+        "УЗИ плевральной полости; пункция и анализ жидкости — только при показаниях"
+      ],
+      "required_context_or_limitations": [
+        "В SR нужны сторона, объём и признаки осложнения; симптомов у модуля нет."
+      ],
+      "next_step_gate": "После результата текущего шага создать новый проект одного шага и направить его специалисту на утверждение.",
+      "references": [
+        "INPUT",
+        "THIRD_OPINION_CT"
+      ],
+      "public_signal_examples": [
+        "объём выпота по стороне"
+      ],
+      "patient_text_template": null
+    },
+    {
+      "id": "CT-CORONARY-CALCIUM",
+      "section": "КТ органов грудной клетки",
+      "variant": "Случайный коронарный кальций",
+      "origin_labels": [
+        "Коронарный кальций"
+      ],
+      "phase": "MVP_EXTENSION",
+      "routing_mode": "manual_only",
+      "priority_for_review": "routine",
+      "signal": {
+        "fields": [],
+        "mapping": "Согласовать код структурированного поля SR/JSON; текстовый ярлык не является правилом сопоставления.",
+        "machine_predicate": null,
+        "mapping_status": "field_not_in_current_profile"
+      },
+      "specialist_candidates": [
+        "терапевт/врач общей практики",
+        "кардиолог при необходимости"
+      ],
+      "reason_for_route": "Находка может быть поводом оценить сердечно-сосудистый риск; сама по себе не требует автоматической коронарографии.",
+      "first_step_candidate": "Обсудить оценку факторов сердечно-сосудистого риска",
+      "optional_research_for_specialist": [
+        "профиль риска и липиды по решению врача"
+      ],
+      "required_context_or_limitations": [
+        "Боль в груди и другие симптомы меняют маршрут, но не доступны из SR."
+      ],
+      "next_step_gate": "После результата текущего шага создать новый проект одного шага и направить его специалисту на утверждение.",
+      "references": [
+        "CAC_CONSENSUS",
+        "THIRD_OPINION_CT"
+      ],
+      "public_signal_examples": [
+        "индекс Agatston",
+        "CAC-DRS"
+      ],
+      "patient_text_template": null
+    },
+    {
+      "id": "CT-EMPHYSEMA",
+      "section": "КТ органов грудной клетки",
+      "variant": "Эмфизема или нарушение воздушности",
+      "origin_labels": [
+        "Нарушение воздушности, эмфизема"
+      ],
+      "phase": "MVP_EXTENSION",
+      "routing_mode": "manual_only",
+      "priority_for_review": "routine",
+      "signal": {
+        "fields": [],
+        "mapping": "Согласовать код структурированного поля SR/JSON; текстовый ярлык не является правилом сопоставления.",
+        "machine_predicate": null,
+        "mapping_status": "field_not_in_current_profile"
+      },
+      "specialist_candidates": [
+        "терапевт/врач общей практики",
+        "пульмонолог при необходимости"
+      ],
+      "reason_for_route": "Находку следует связать с симптомами и функцией дыхания до выбора дальнейших исследований.",
+      "first_step_candidate": "Обсудить результат и необходимость функциональной оценки",
+      "optional_research_for_specialist": [
+        "спирометрия — по решению специалиста"
+      ],
+      "required_context_or_limitations": [
+        "Симптомы и история не входят в текущий контур."
+      ],
+      "next_step_gate": "После результата текущего шага создать новый проект одного шага и направить его специалисту на утверждение.",
+      "references": [
+        "INPUT",
+        "THIRD_OPINION_CT"
+      ],
+      "public_signal_examples": [
+        "процент поражения/описание нарушения воздушности"
+      ],
+      "patient_text_template": null
+    }
+  ],
+  "selection": {
+    "method": "Короткая практическая выборка для демонстрации маммографии и КТ ОГК. Это не доказанный рейтинг частоты находок.",
+    "reason": "Эти два направления составляют текущий MVP; выбор покрывает нормальный, наблюдательный, подозрительный и ручной сценарии.",
+    "excluded": "Рентгенография/флюорография и КТ головного мозга — вне первой версии. Остальные категории из исходного JSON сохраняются в tag.source.json для последующего экспертного отбора."
+  }
+}

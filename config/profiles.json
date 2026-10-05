@@ -1,0 +1,104 @@
+{
+  "private": {
+    "label": "Клиника «Спектр»",
+    "clinic_id": "private",
+    "input": "json",
+    "study_path": "studyIUID",
+    "conclusion_path": "aiResult.conclusion",
+    "fields": {
+      "MAMMOGRAPHY": {
+        "mmg_rads_right": {
+          "path": "aiResult.probParams.mmg.mmg_rads_right",
+          "type": "integer",
+          "min": 1,
+          "max": 5
+        },
+        "mmg_rads_left": {
+          "path": "aiResult.probParams.mmg.mmg_rads_left",
+          "type": "integer",
+          "min": 1,
+          "max": 5
+        }
+      },
+      "CT_CHEST": {
+        "ct_lc_num": {
+          "path": "aiResult.probParams.ct_lc.ct_lc_num",
+          "type": "integer",
+          "min": 0,
+          "max": 1000
+        }
+      }
+    },
+    "services": {
+      "consultation": "SP-01",
+      "followup": "SP-02",
+      "lab_demo": "SP-LAB-DEMO",
+      "diagnostic_imaging": "SP-IMAGING-DEMO",
+      "procedure": "SP-PROCEDURE-DEMO"
+    },
+    "version": "demo-1",
+    "booking_mode": "local_simulator",
+    "report_ingress": {
+      "auth": "hmac_sha256",
+      "secret_env": "MEDITRON_REPORT_SECRET_PRIVATE",
+      "max_clock_skew_seconds": 300
+    },
+    "demo_scenarios": true
+  },
+  "pacs": {
+    "label": "Диагностический центр",
+    "clinic_id": "pacs",
+    "input": "dicom",
+    "study_path": "studyIUID",
+    "conclusion_path": "aiResult.conclusion",
+    "fields": {
+      "MAMMOGRAPHY": {
+        "mmg_rads_right": {
+          "path": "aiResult.probParams.mmg.mmg_rads_right",
+          "type": "integer",
+          "min": 1,
+          "max": 5,
+          "sr_code": "mmg_rads_right"
+        },
+        "mmg_rads_left": {
+          "path": "aiResult.probParams.mmg.mmg_rads_left",
+          "type": "integer",
+          "min": 1,
+          "max": 5,
+          "sr_code": "mmg_rads_left"
+        }
+      },
+      "CT_CHEST": {
+        "ct_lc_num": {
+          "path": "aiResult.probParams.ct_lc.ct_lc_num",
+          "type": "integer",
+          "min": 0,
+          "max": 1000,
+          "sr_code": "ct_lc_num"
+        }
+      }
+    },
+    "services": {
+      "consultation": "DC-01",
+      "followup": "DC-02",
+      "lab_demo": "DC-LAB-DEMO",
+      "diagnostic_imaging": "DC-IMAGING-DEMO",
+      "procedure": "DC-PROCEDURE-DEMO"
+    },
+    "version": "demo-1",
+    "sr_scheme": "ZDEMO",
+    "sr_conclusion_code": "conclusion",
+    "booking_mode": "deferred_simulator",
+    "booking_callback": {
+      "auth": "hmac_sha256",
+      "secret_env": "MEDITRON_BOOKING_SECRET_PACS",
+      "max_clock_skew_seconds": 300
+    },
+    "report_ingress": {
+      "auth": "hmac_sha256",
+      "secret_env": "MEDITRON_REPORT_SECRET_PACS",
+      "max_clock_skew_seconds": 300
+    },
+    "demo_scenarios": true
+  }
+}
