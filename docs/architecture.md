@@ -5,7 +5,7 @@
 **Назначение:** единая редактируемая точка правды для разработки.
 **Источники:** обсуждение с заказчиком, `Кейс_Третье_мнение.pdf`, БФТ от 15.09.2026 (Kafka-message и шаблоны DICOM SR). Примеры БФТ не считаются промышленным контрактом конкретной клиники. Для демонстрации используются синтетические данные; реальные сообщения клиники сейчас недоступны.
 
-Публичные источники и входные данные для медицинской матрицы вынесены в [research-and-matrix-inputs.md](research-and-matrix-inputs.md). Исполнимый план демонстрации и проверки универсальности — в [synthetic-demo-and-contracts.md](synthetic-demo-and-contracts.md). Этапы разработки и выбранные технологии с обоснованием — в [implementation-plan.md](implementation-plan.md) и [technology-stack.md](technology-stack.md).
+Публичные источники и входные данные для медицинской матрицы вынесены в [research-and-matrix-inputs.md](research-and-matrix-inputs.md). Сценарии демонстрации и проверки универсальности — в [synthetic-demo-and-contracts.md](synthetic-demo-and-contracts.md). Текущая реализация и оставшиеся задачи описаны в [implementation-status.md](implementation-status.md), выбранные технологии — в [technology-stack.md](technology-stack.md).
 
 Обозначения ниже: **принято** — договорённость проекта; **предлагается** — архитектурное решение для реализации; **открыто** — нужен ответ клиники или медицинского эксперта.
 
